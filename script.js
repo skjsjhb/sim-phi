@@ -320,7 +320,7 @@ async function checkSupport() {
   if (!(await loadPlugin("md5", urls.md5, () => isUndefined("md5")))) return -3;
   msgHandler.sendMessage("加载声音组件...");
   const oggCompatible = !!new Audio().canPlayType("audio/ogg");
-  if (!(await loadPlugin("ogg格式兼容", "/lib/oggmented-bundle.js", () => !oggCompatible && isUndefined("oggmented"))))
+  if (!(await loadPlugin("ogg格式兼容", "./oggmented-bundle.js", () => !oggCompatible && isUndefined("oggmented"))))
     return -4;
   audio.init(oggCompatible ? self.AudioContext || self.webkitAudioContext : oggmented.OggmentedAudioContext); //兼容Safari
   const orientSupported = await orientation.checkSupport();
