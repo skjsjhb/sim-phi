@@ -1022,12 +1022,13 @@ document.addEventListener("DOMContentLoaded", async function qwq() {
   msgHandler.sendMessage("初始化...");
   if (await checkSupport()) return;
   const res0 = {};
-  await fetch(atob("aHR0cHM6Ly9sY2h6aC5uZXQvZGF0YS9wYWNrLmpzb24="))
-    .then((i) => i.json())
-    .then((i) => {
-      for (const j in i.image || {}) res0[j] = i.image[j];
-      for (const j in i.audio || {}) res0[j] = i.audio[j];
-    });
+  (() => {
+    const dat = `{"image":{"JudgeLine":"//i2.hdslb.com/bfs/music/1673237951.png|8080","ProgressBar":"//i3.hdslb.com/bfs/music/1673237966.png|8080","SongsNameBar":"//i0.hdslb.com/bfs/music/1673237977.png|8080","HitFXRaw":"//i2.hdslb.com/bfs/face/5094e42fed15363384b856c8dcef6a9e06507b94.png|8080","Tap":"//i3.hdslb.com/bfs/face/a3636c5f083713f32b593780e3e3873b1618b0ad.png|8080","TapHL":"//i2.hdslb.com/bfs/face/a218ece0645ca903d785a5b1ddacbcbb4e21ddaa.png|8080","Drag":"//i1.hdslb.com/bfs/face/5673d162fa6a6773828d153b79b9cd7661756e3c.png|8080","DragHL":"//i0.hdslb.com/bfs/face/fabf6606ceb7147d7fdc01871ba1dc5a46713a7c.png|8080","HoldHead":"//i3.hdslb.com/bfs/music/1673237586.png|8080","HoldHeadHL":"//i3.hdslb.com/bfs/music/1673237551.png|7875","Hold":"//i1.hdslb.com/bfs/face/4cf84b98ea62e0bc9db3cca13576031573215404.png|8080","HoldHL":"//i0.hdslb.com/bfs/face/c0c8ab1f023b13bf9184059cb5af4d53560d84b4.png|7875","HoldEnd":"//i3.hdslb.com/bfs/music/1673238102.png|8080","Flick":"//i2.hdslb.com/bfs/face/7305a60718b39595db7c3e03a062acdfc09d10a6.png|8080","FlickHL":"//i0.hdslb.com/bfs/face/a3975cb3a730540b2d927c435a148752f59a2a16.png|8080","LevelOver1":"//i1.hdslb.com/bfs/face/5e073fc762cb2d453ee8ddf24a07d27af681940c.png|8080","LevelOver3":"//i2.hdslb.com/bfs/face/ca8e97a06b68f94e6f731253b0c4dd4421b81e89.png|8080","LevelOver4":"//i1.hdslb.com/bfs/face/11e4fdfa326ab7e97c9b4feab508e6e687aebb57.png|8080","LevelOver5":"//i0.hdslb.com/bfs/face/e44a4fc54e4ffbf05014ee69f231b6b64e19f962.png|8080","Rank":"//i0.hdslb.com/bfs/face/3d6cb03c93536e39496944f0f4f50c9c765288be.png|8080"},"audio":{"HitSong0":"//i0.hdslb.com/bfs/music/1673231631.png|m8","HitSong1":"//i2.hdslb.com/bfs/music/1673231636.png|m8","HitSong2":"//i1.hdslb.com/bfs/music/1673231639.png|m8","LevelOver0_v1":"//i1.hdslb.com/bfs/music/1673230967.png|m8","LevelOver1_v1":"//i0.hdslb.com/bfs/music/1673230996.png|m8","LevelOver2_v1":"//i1.hdslb.com/bfs/music/1673231586.png|m8","LevelOver3_v1":"//i0.hdslb.com/bfs/music/1673231518.png|m8"},"alternative":{"LevelOver0_v1":"//i1.hdslb.com/bfs/music/1676001486.ogg","LevelOver1_v1":"//i3.hdslb.com/bfs/music/1676001490.ogg","LevelOver2_v1":"//i3.hdslb.com/bfs/music/1676001494.ogg","LevelOver3_v1":"//i0.hdslb.com/bfs/music/1676001497.ogg"}}`;
+    const i = JSON.parse(dat);
+    for (const j in i.image || {}) res0[j] = i.image[j];
+    for (const j in i.audio || {}) res0[j] = i.audio[j];
+  })();
+
   //加载资源
   await Promise.all(
     Object.entries(res0).map(
