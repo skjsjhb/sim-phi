@@ -162,13 +162,7 @@
             </select>
           </div>
           <div class="disabled-when-playing">
-            音乐变速：<select id="select-speed" style="width: 4em">
-              <option value="Slowest">极慢</option>
-              <option value="Slower">较慢</option>
-              <option value="" selected>正常</option>
-              <option value="Faster">较快</option>
-              <option value="Fastest">极快</option>
-            </select>
+            音乐变速：<input id="select-speed" type="text" value="1.00" style="width: 4em" />
           </div>
           <br />
           <div class="disabled-when-playing">
@@ -194,8 +188,8 @@
             <input type="checkbox" id="mod-ez" />
             <label title="各方面难度都降低一点" for="mod-ez">Easy</label>
             <span class="md"
-              >判定时间扩大一倍<br />取消 Bad 判定<br />连击断开时保留一定的连击数<br />Hold 可以中间松开而不视为
-              Miss</span
+              >判定时间扩大一倍<br />横向判定区域扩大 25%<br />取消 Bad 判定 <br />连击断开时保留一定的连击数<br />Hold
+              可以中间松开而不视为 Miss</span
             >
 
             <input type="checkbox" id="mod-rl" />
@@ -222,7 +216,7 @@
             挑战：
             <input type="checkbox" id="mod-hr" />
             <label title="各方面难度都提升一点" for="mod-hr">Hard Rock</label>
-            <span class="md">判定区间缩短一半<br />Bad 的判定仅略微减短</span>
+            <span class="md">判定区间缩短一半<br />Bad 的判定仅略微减短<br />横向判定区域削减 25%</span>
 
             <input type="checkbox" id="mod-eb" />
             <label title="不接受 Good" for="mod-eb">Elite Beat</label>
@@ -236,16 +230,12 @@
             <label title="Note 在到达判定线之前消失" for="mod-hd">Hidden</label>
             <span class="md"
               >Tap, Drag 和 Flick 在到达判定线之前会淡出并消失<br />Hold 不会消失但会降低亮度<br />Hold 的 Good
-              判定全都算作 Bad</span
+              判定全都算作 Bad <br />作为补偿, 略微扩大判定范围</span
             >
 
             <input type="checkbox" id="mod-fl" />
-            <label title="判定线的亮度随 Combo 而降低" for="mod-fl"
-              >Fade Line</label
-            >
-            <span class="md"
-              >Combo 越多判定线亮度越低, 在 200 连击的时候彻底消失.</span
-            >
+            <label title="判定线的亮度随 Combo 而降低" for="mod-fl">Fade Line</label>
+            <span class="md">Combo 越多判定线亮度越低, 在 200 连击的时候彻底消失.</span>
           </div>
           <br />
           <br />
