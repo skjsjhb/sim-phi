@@ -6,9 +6,6 @@ self.addEventListener("fetch", (event) => {
   // for non-GET requests.
   if (request.method !== "GET") return;
   if (request.url.includes("music.163.com")) return;
-  if (remaps[request.url] !== undefined) {
-    request.url = remaps[request.url];
-  }
   // Prevent the default, and handle the request ourselves.
   event.respondWith(
     (async () => {
