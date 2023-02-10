@@ -214,40 +214,8 @@ const Utils = {
   }
   self.isIncognito = percent;
 }
-//stat
-(function () {
-  if (!!location.port) return;
-  /* Baidu Tongji */
-  Utils.loadJS(`
-		var _hmt = _hmt || [];
-		(function() {
-		var hm = document.createElement("script");
-		hm.src = "https://hm.baidu.com/hm.js?a2847526e110755a92e0ed1c8e948a32";
-		var s = document.getElementsByTagName("script")[0]; 
-		s.parentNode.insertBefore(hm, s);
-		})();
-	`);
-  /* Global site tag (gtag.js) - Google Analytics */
-  Utils.loadJS("https://www.googletagmanager.com/gtag/js?id=G-K98WR056RJ").then(
-    () =>
-      Utils.loadJS(`
-		window.dataLayer = window.dataLayer || [];
-		function gtag(){dataLayer.push(arguments);}
-		gtag('js', new Date());
-		gtag('config', 'G-K98WR056RJ');
-	`)
-  );
-  /* sdk.51.la */
-  Utils.loadJS(
-    '!function(p){"use strict";!function(t){var s=window,e=document,i=p,c="".concat("https:"===e.location.protocol?"https://":"http://","sdk.51.la/js-sdk-pro.min.js"),n=e.createElement("script"),r=e.getElementsByTagName("script")[0];n.type="text/javascript",n.setAttribute("charset","UTF-8"),n.async=!0,n.src=c,n.id="LA_COLLECT",i.d=n;var o=function(){s.LA.ids.push(i)};s.LA?s.LA.ids&&o():(s.LA=p,s.LA.ids=[],o()),r.parentNode.insertBefore(n,r)}()}({id:"Jj67QM9XKxdyBUKP",ck:"Jj67QM9XKxdyBUKP"});'
-  );
-  Utils.loadJS(
-    "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8369333813205733"
-  );
-})();
 //cookie
 Utils.lazyload(function () {
-  const cnymd = Utils.cnymd;
   const jct = document.cookie.match(/jct=(.+?)(;|$)/);
   const d = "lchz\x683\x3473";
   const w = `原作者：<a style="text-decoration:underline"target="_blank"href="//space.bilibili.com/274753872">${d}</a>`;
