@@ -155,8 +155,8 @@ selectflip.addEventListener("change", (evt) => {
 });
 const selectspeed = $("select-speed");
 selectspeed.addEventListener("change", (evt) => {
-  const dict = { Slowest: -9, Slower: -4, "": 0, Faster: 3, Fastest: 5 };
-  app.speed = 2 ** (dict[evt.target.value] / 12) * app.getModsTimingModifier();
+  app.speed =
+    (parseFloat(evt.target.value || "1") || 1) * app.getModsTimingModifier();
 });
 const scfg = function () {
   const arr = [];
@@ -173,10 +173,10 @@ const scfg = function () {
       break;
     default:
   }
-  if (selectspeed.value) arr[arr.length] = selectspeed.value;
+  if (selectspeed.value) arr[arr.length] = selectspeed.value + "x";
   if (isPaused) arr[arr.length] = "Paused";
   if (arr.length === 0) return "";
-  return `(${arr.join("+")})`;
+  return ` (${arr.join(" ")})`;
 };
 const inputName = $("input-name");
 const inputArtist = $("input-artist");
@@ -1605,7 +1605,14 @@ function calcqwq(now) {
   }
   //触发判定和播放打击音效
   if (isInEnd) {
-    const judgeWidth = canvasos.width * 0.118125;
+    let judgeWidth = canvasos.width * 0.118125;
+    if (app.mods.has("hr")) {
+      judgeWidth *= 0.75;
+    } else if (app.mods.has("ez")) {
+      judgeWidth *= 1.25;
+    } else if (app.mods.has("hd")) {
+      judgeWidth *= 1.05;
+    }
     judgeManager.addEvent(app.notes, timeChart);
     judgeManager.execute(app.drags, timeChart, judgeWidth);
     judgeManager.execute(app.flicks, timeChart, judgeWidth);
@@ -1890,7 +1897,7 @@ function qwqdraw1(now) {
         : 1 - tween.easeOutSine(qwqOut.second * 1.5);
     ctxos.font = `${lineScale * 0.66}px Custom,Noto Sans SC`;
     ctxos.fillText(
-      app.playMode === 1 ? "Autoplay" : "combo",
+      app.playMode === 1 ? "Auto" : "combo",
       app.wlen,
       lineScale * 2.05
     );
