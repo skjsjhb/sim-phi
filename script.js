@@ -1,5 +1,5 @@
 import simphi from "./js/simphi.js";
-import { audio } from "/utils/aup.js";
+import { audio } from "./utils/aup.js";
 import {
   full,
   Timer,
@@ -12,7 +12,7 @@ import {
   orientation,
 } from "./js/common.js";
 import { uploader, readZip } from "./js/reader.js";
-import InterAct from "/utils/interact.js";
+import InterAct from "./utils/interact.js";
 self._i = ["Phi\x67ros 模拟器 Mod 版", [1, 4, 22, "b18"], 1611795955, 1675547193];
 const $ = (query) => document.getElementById(query);
 const $$ = (query) => document.body.querySelector(query);
