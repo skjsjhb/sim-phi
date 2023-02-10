@@ -247,7 +247,7 @@ const lineColor = $("lineColor");
 $("autoplay").addEventListener("change", (evt) => {
   app.playMode = evt.target.checked ? 1 : 0;
 });
-for (const m of ["ez", "ht", "fo", "hr", "dt", "hd", "eb", "rl", "nf"]) {
+for (const m of ["ez", "ht", "fo", "hr", "dt", "hd", "eb", "rl", "nf", "fl"]) {
   $("mod-" + m).addEventListener("change", (e) => {
     if (!app.mods.has(m) && e.target.checked) {
       app.mods.add(m);
@@ -1402,7 +1402,6 @@ function playBgm(data, offset) {
 }
 let fucktemp = false;
 let fucktemp2 = false;
-let sdpfStop = false;
 //作图
 function loop() {
   const { lineScale } = app;
@@ -1430,7 +1429,9 @@ function loop() {
   ctx.textAlign = "right";
   ctx.textBaseline = "middle";
   ctx.fillText(
-    `Phi\x67ros Simulator v${_i[1].join(".")} - Code by lchz\x683\x3473`,
+    `Phi\x67ros Simulator v${_i[1].join(
+      "."
+    )} - Code by lchz\x683\x3473 - Mods by skjsjhb`,
     (canvas.width + canvasos.width) / 2 - lineScale * 0.1,
     canvas.height - lineScale * 0.2
   );
@@ -1453,6 +1454,14 @@ function calcExAlpha(timeChart, realTime, type) {
       exAlpha = 1;
     }
     return exAlpha;
+  } else {
+    return 1;
+  }
+}
+
+function calcFLAlpha() {
+  if (app.mods.has("fl")) {
+    return Math.max(1 - stat.combo / 200, 0);
   } else {
     return 1;
   }
@@ -1487,6 +1496,7 @@ function calcqwq(now) {
       const t1 = 1 - t2;
       line.alpha = i.start * t1 + i.end * t2;
     }
+
     for (const i of line.judgeLineMoveEvents) {
       if (timeChart < i.startRealTime) break;
       if (timeChart > i.endRealTime) continue;
@@ -1577,6 +1587,9 @@ function calcqwq(now) {
         else i.alpha = Math.max(1 - (timeChart - i.realTime) / 0.16, 0); //过线后0.16s消失
         i.frameCount = isNaN(i.frameCount) ? 0 : i.frameCount + 1;
       }
+    }
+    if (line.notesAbove.length > 0 || line.notesBelow.length > 0) {
+      line.alpha *= calcFLAlpha();
     }
   }
   //更新打击特效和触摸点动画

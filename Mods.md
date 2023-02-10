@@ -69,3 +69,9 @@ Phigros 的满分是 1000000，但可通过模组取得更高的分数。
 - Hold 的亮度降低至 40%
 
 - 取消 Hold 的 Good 判定，若不是 Perfect 将判为 Miss
+
+### Fade Line
+
+判定线渐隐:
+
+- 判定线的可见度随 Combo 的增加而降低, 达到 200 Combo 时完全消失.
