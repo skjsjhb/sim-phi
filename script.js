@@ -1140,7 +1140,7 @@ document.addEventListener("DOMContentLoaded", async function qwq() {
           let [url, ext] = src.split("|");
           if (name == "Rank") {
             // Inject
-            url = "https://i.imgur.com/hktoDck.png";
+            url = "./ranks.png";
             ext = undefined;
           }
           fetch(url, { referrerPolicy: "no-referrer" })
