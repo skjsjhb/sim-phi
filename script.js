@@ -344,7 +344,7 @@ async function checkSupport() {
   if (
     !(await loadPlugin(
       "ogg格式兼容",
-      "/lib/oggmented-bundle.js",
+      "./oggmented-bundle.js",
       () => !oggCompatible && isUndefined("oggmented")
     ))
   )
