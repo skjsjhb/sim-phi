@@ -921,10 +921,7 @@ const judgeManager = {
               nearcomp = true;
             }
           }
-          if (
-            deltaTime2 > jdm.good ||
-            (app.mods.has("hd") && deltaTime2 > jdm.perfect)
-          ) {
+          if (deltaTime2 > jdm.good) {
             if (judgeEvent.preventBad) continue;
             noteJudge.status = 6; //console.log('Bad', i.name);
             noteJudge.badtime = performance.now();
