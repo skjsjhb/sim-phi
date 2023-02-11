@@ -428,7 +428,13 @@ self.addEventListener("resize", () => stage.resize());
           return audio.decode(...arguments);
         },
         onloadstart: () => msgHandler.sendMessage("加载zip组件..."),
-        onread: handleFile,
+        onread: (...a) => {
+          handleFile(...a).then(() => {
+            if (app.hasVideo) {
+              msgHandler.sendMessage("提醒：视频可能导致卡顿，如遇请换纯音频重开");
+            }
+          });
+        },
       }
     );
   };
