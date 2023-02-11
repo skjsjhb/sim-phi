@@ -581,7 +581,10 @@ function getJudgeDistance(judgeEvent, note) {
 }
 
 function normalizeCoord(x, y) {
-  return [(x * 100) / canvasos.width, (y * 100) / canvasos.height];
+  return [
+    ((x * 100) / canvasos.width).toFixed(4), // Compressing
+    ((y * 100) / canvasos.height).toFixed(4),
+  ];
 }
 
 function localizeCoord(u, v) {
@@ -655,19 +658,19 @@ const judgeManager = {
           for (const i of hitManager.list) {
             if (!i.isTapped) {
               list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 1);
-              this.replay.push([realTime, ...normalizeCoord(i.offsetX, i.offsetY), 1]);
+              this.replay.push([realTime.toFixed(4), ...normalizeCoord(i.offsetX, i.offsetY), 1]);
             }
             if (i.isActive) {
               list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 2);
-              this.replay.push([realTime, ...normalizeCoord(i.offsetX, i.offsetY), 2]);
+              this.replay.push([realTime.toFixed(4), ...normalizeCoord(i.offsetX, i.offsetY), 2]);
             }
             if (i.type === "keyboard") {
               list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 3);
-              this.replay.push([realTime, ...normalizeCoord(i.offsetX, i.offsetY), 3]);
+              this.replay.push([realTime.toFixed(4), ...normalizeCoord(i.offsetX, i.offsetY), 3]);
             }
             if (i.flicking && !i.flicked) {
               list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 3, i);
-              this.replay.push([realTime, ...normalizeCoord(i.offsetX, i.offsetY), 3]);
+              this.replay.push([realTime.toFixed(4), ...normalizeCoord(i.offsetX, i.offsetY), 3]);
             }
           }
         }
@@ -897,11 +900,10 @@ function dlReplay() {
     }),
   });
   var element = document.createElement("a");
-  element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(st));
-  element.setAttribute(
-    "download",
-    (inputName.value || inputName.placeholder) + " " + levelText + " " + Math.round(stat.getScoreNum(app)) + ".phr"
-  );
+  element.href = "data:application/x-sim-phi-replay;charset=utf-8," + encodeURIComponent(st);
+  element.download =
+    (inputName.value || inputName.placeholder) + " " + levelText + " " + Math.round(stat.getScoreNum(app)) + ".phr";
+
   element.style.display = "none";
   document.body.appendChild(element);
   element.click();
