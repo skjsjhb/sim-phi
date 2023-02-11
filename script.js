@@ -153,7 +153,7 @@ selectspeed.addEventListener("change", (evt) => {
 });
 const scfg = function () {
   const arr = [];
-  if (qwq[5]) arr[arr.length] = "Reversed";
+  if (icwCfg[5]) arr[arr.length] = "Reversed";
   switch (selectflip.value) {
     case "1":
       arr[arr.length] = "FlipX";
@@ -243,8 +243,8 @@ $("autoplay").addEventListener("change", (evt) => {
 $("replay").addEventListener("change", (evt) => {
   app.playMode = evt.target.checked ? 4 : 0;
 });
-for (const m of ["ez", "ht", "fo", "hr", "dt", "hd", "eb", "rl", "nf", "fl"]) {
-  $("mod-" + m).addEventListener("change", (e) => {
+for (const m of ["ez", "ht", "fo", "hr", "dt", "hd", "eb", "rl", "nf", "fl", "sk", "is"]) {
+  $("mod-" + m)?.addEventListener("change", (e) => {
     if (!app.mods.has(m) && e.target.checked) {
       app.mods.add(m);
     } else if (app.mods.has(m) && !e.target.checked) {
@@ -489,15 +489,11 @@ self.addEventListener("resize", () => stage.resize());
     }
   }
 }
-//qwq[water,demo,democlick]
-const qwq = [true, false, 3, 0, 0, 0];
-eval(
-  atob(
-    "IWZ1bmN0aW9uKCl7Y29uc3QgdD1uZXcgRGF0ZTtpZigxIT10LmdldERhdGUoKXx8MyE9dC5nZXRNb250aCgpKXJldHVybjtjb25zdCBuPWRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoInNjcmlwdCIpO24udHlwZT0idGV4dC9qYXZhc2NyaXB0IixuLnNyYz0iLi9yLW1pbi5qcyIsZG9jdW1lbnQuZ2V0RWxlbWVudHNCeVRhZ05hbWUoImhlYWQiKVswXS5hcHBlbmRDaGlsZChuKX0oKTs"
-  )
-);
+//[water,demo,democlick]
+const icwCfg = [true, false, 3, 0, 0, 0];
+
 $$(".title").addEventListener("click", function () {
-  if (!--qwq[2]) $(new URLSearchParams(location.search).has("test") ? "demo" : "legacy").classList.remove("hide");
+  if (!--icwCfg[2]) $(new URLSearchParams(location.search).has("test") ? "demo" : "legacy").classList.remove("hide");
 });
 //qwq end
 const exitFull = () => {
@@ -547,7 +543,7 @@ const specialClick = {
     if (offsetX > canvasos.width - lineScale * 1.5 && offsetY < lineScale * 1.5) this.click(1);
     if (offsetX < lineScale * 1.5 && offsetY > canvasos.height - lineScale * 1.5) this.click(2);
     if (offsetX > canvasos.width - lineScale * 1.5 && offsetY > canvasos.height - lineScale * 1.5) this.click(3);
-    if (qwqEnd.second > 0) qwq[3] = qwq[3] > 0 ? -qwqEnd.second : qwqEnd.second;
+    if (timerEnd.second > 0) icwCfg[3] = icwCfg[3] > 0 ? -timerEnd.second : timerEnd.second;
   },
 };
 const hitManager = new simphi.HitManager();
@@ -892,7 +888,7 @@ function dlReplay() {
       difficulty: selectDifficulty.value,
       speed: selectspeed.value,
       mods: [...app.mods],
-      score: Math.round(stat.scoreNum),
+      score: Math.round(stat.getScoreNum(app)),
       acc: (Math.round(stat.accNum * 10000) / 100).toFixed(2),
       maxCombo: stat.maxcombo,
     },
@@ -904,7 +900,7 @@ function dlReplay() {
   element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(st));
   element.setAttribute(
     "download",
-    (inputName.value || inputName.placeholder) + " " + levelText + " " + Math.round(stat.scoreNum) + ".phr"
+    (inputName.value || inputName.placeholder) + " " + levelText + " " + Math.round(stat.getScoreNum(app)) + ".phr"
   );
   element.style.display = "none";
   document.body.appendChild(element);
@@ -1259,9 +1255,9 @@ document.addEventListener(
   "pagehide",
   () => document.visibilityState === "hidden" && btnPause.value === "暂停" && btnPause.click()
 ); //兼容Safari
-const qwqIn = new Timer();
-const qwqOut = new Timer();
-const qwqEnd = new Timer();
+const timerIn = new Timer();
+const timerOut = new Timer();
+const timerEnd = new Timer();
 //play
 
 btnPlay.addEventListener("click", async function () {
@@ -1328,13 +1324,13 @@ btnPlay.addEventListener("click", async function () {
     isOutEnd = false;
     isPaused = false;
     timeBgm = 0;
-    if (!showTransition.checked) qwqIn.addTime(3000);
+    if (!showTransition.checked) timerIn.addTime(3000);
     canvas.classList.remove("fade");
     $("mask").classList.add("fade");
     btnPause.classList.remove("disabled");
     for (const i of $$$(".disabled-when-playing")) i.classList.add("disabled");
     loop();
-    qwqIn.play();
+    timerIn.play();
   } else {
     audio.stop();
     cancelAnimationFrame(stopDrawing);
@@ -1348,9 +1344,9 @@ btnPlay.addEventListener("click", async function () {
     hitEvents0.clear();
     hitEvents1.clear();
     hitEvents2.clear();
-    qwqIn.reset();
-    qwqOut.reset();
-    qwqEnd.reset();
+    timerIn.reset();
+    timerOut.reset();
+    timerEnd.reset();
     curTime = 0;
     curTimestamp = 0;
     duration = 0;
@@ -1360,19 +1356,15 @@ btnPlay.addEventListener("click", async function () {
 btnPause.addEventListener("click", async function () {
   if (this.classList.contains("disabled") || btnPlay.value === "播放") return;
   if (this.value === "暂停") {
-    if (app.bgVideo) app.bgVideo.pause();
-    qwqIn.pause();
-    if (showTransition.checked && isOutStart) qwqOut.pause();
+    timerIn.pause();
+    if (showTransition.checked && isOutStart) timerOut.pause();
     isPaused = true;
     this.value = "继续";
     curTime = timeBgm;
     audio.stop();
   } else {
-    if (app.bgVideo) {
-      await playVideo(app.bgVideo, timeBgm * app.speed);
-    }
-    qwqIn.play();
-    if (showTransition.checked && isOutStart) qwqOut.play();
+    timerIn.play();
+    if (showTransition.checked && isOutStart) timerOut.play();
     isPaused = false;
     if (isInEnd && !isOutStart) playBgm(app.bgMusic, timeBgm * app.speed);
     this.value = "暂停";
@@ -1397,7 +1389,7 @@ function loop() {
   const now = performance.now();
   app.resizeCanvas();
   //计算时间
-  if (qwqOut.second < 0.67) {
+  if (timerOut.second < 0.67) {
     moveElements(now);
     drawGameStart(now);
   } else if (!isDone) drawEndPlay();
@@ -1445,6 +1437,52 @@ function calcExAlpha(timeChart, realTime, type) {
   }
 }
 
+const modsCanonical = {
+  ez: "Easy",
+  rl: "Relax",
+  nf: "No Fall",
+  fo: "Flick Over",
+  ht: "Half Time",
+  hr: "Hard Rock",
+  eb: "Elite Beat",
+  dt: "Double Time",
+  hd: "Hidden",
+  fl: "Fade Line",
+  sk: "Skill",
+  is: "InfScore",
+};
+
+const modsValue = {
+  ez: -1,
+  rl: -1,
+  nf: -2,
+  fo: -1,
+  ht: -2,
+  hr: 1,
+  eb: 1,
+  dt: 2,
+  hd: 2,
+  fl: 1,
+  sk: 0,
+  is: 0,
+};
+
+function getModsText() {
+  let o = [];
+  for (const m of [...app.mods].sort().reverse()) {
+    o.push(modsCanonical[m] || "");
+  }
+  return o.join("   ");
+}
+
+function isTooHard() {
+  let sum = 0;
+  for (const m of [...app.mods].sort().reverse()) {
+    sum += modsValue[m] || 0;
+  }
+  return sum >= 3;
+}
+
 function calcFLAlpha() {
   if (app.mods.has("fl")) {
     return Math.max(1 - stat.combo / 100, 0);
@@ -1455,7 +1493,7 @@ function calcFLAlpha() {
 
 function moveElements(now) {
   frameTimer.addTick(); //计算fps
-  if (!isInEnd && qwqIn.second >= 3) {
+  if (!isInEnd && timerIn.second >= 3) {
     isInEnd = true;
     playBgm(app.bgMusic);
   }
@@ -1463,7 +1501,7 @@ function moveElements(now) {
   if (timeBgm >= duration) isOutStart = true;
   if (showTransition.checked && isOutStart && !isOutEnd) {
     isOutEnd = true;
-    qwqOut.play();
+    timerOut.play();
   }
   timeChart = Math.max(timeBgm - app.chart.offset / app.speed - (Number(inputOffset.value) / 1e3 || 0), 0);
   //遍历判定线events和Note
@@ -1540,7 +1578,7 @@ function moveElements(now) {
               ? showPoint.checked
                 ? 0.45
                 : 0
-              : qwq[5]
+              : icwCfg[5]
               ? Math.max(1 + (timeChart - i.realTime) / 1.5, 0)
               : 1;
         //过线前1.5s出现
@@ -1584,7 +1622,7 @@ function moveElements(now) {
   }
   //更新判定
   hitManager.update();
-  if (qwq[4] && stat.good + stat.bad) {
+  if (icwCfg[4] && stat.good + stat.bad) {
     stat.level = Number(levelText.match(/\d+$/));
     stat.reset();
     btnPlay.click();
@@ -1634,11 +1672,11 @@ function drawGameStart(now) {
   ctxos.clearRect(0, 0, canvasos.width, canvasos.height); //重置画面
   ctxos.globalCompositeOperation = "destination-over"; //由后往前绘制
   if ($("showCE2").checked) hitEvents2.anim(anim2);
-  if (qwq[4]) ctxos.filter = `hue-rotate(${(energy * 360) / 7}deg)`;
+  if (icwCfg[4]) ctxos.filter = `hue-rotate(${(energy * 360) / 7}deg)`;
   hitEvents1.anim(anim1, now);
-  if (qwq[4]) ctxos.filter = "none";
+  if (icwCfg[4]) ctxos.filter = "none";
   if ($("feedback").checked) hitEvents0.anim(anim0);
-  if (qwqIn.second >= 3 && qwqOut.second === 0) {
+  if (timerIn.second >= 3 && timerOut.second === 0) {
     if (showPoint.checked) {
       //绘制定位点
       ctxos.font = `${lineScale}px Custom,Noto Sans SC`;
@@ -1671,16 +1709,16 @@ function drawGameStart(now) {
     for (const i of app.reverseholds) drawHold(i, timeChart);
   }
   //绘制背景
-  if (qwq[4]) ctxos.filter = `hue-rotate(${(energy * 360) / 7}deg)`;
-  if (qwqIn.second >= 2.5) drawLine(stat.lineStatus ? 2 : 1); //绘制判定线(背景前1)
-  if (qwq[4]) ctxos.filter = "none";
+  if (icwCfg[4]) ctxos.filter = `hue-rotate(${(energy * 360) / 7}deg)`;
+  if (timerIn.second >= 2.5) drawLine(stat.lineStatus ? 2 : 1); //绘制判定线(背景前1)
+  if (icwCfg[4]) ctxos.filter = "none";
   ctxos.resetTransform();
   ctxos.fillStyle = "#000"; //背景变暗
   ctxos.globalAlpha = app.brightness; //背景不透明度
   ctxos.fillRect(0, 0, canvasos.width, canvasos.height);
-  if (qwq[4]) ctxos.filter = `hue-rotate(${(energy * 360) / 7}deg)`;
-  if (qwqIn.second >= 2.5 && !stat.lineStatus) drawLine(0); //绘制判定线(背景后0)
-  if (qwq[4]) ctxos.filter = "none";
+  if (icwCfg[4]) ctxos.filter = `hue-rotate(${(energy * 360) / 7}deg)`;
+  if (timerIn.second >= 2.5 && !stat.lineStatus) drawLine(0); //绘制判定线(背景后0)
+  if (icwCfg[4]) ctxos.filter = "none";
   ctxos.globalAlpha = 1;
   ctxos.resetTransform();
   if (isInEnd && app.bgVideo) {
@@ -1703,21 +1741,23 @@ function drawGameStart(now) {
     canvasos.width / 1920,
     0,
     lineScale *
-      (qwqIn.second < 0.67 ? tween.easeOutSine(qwqIn.second * 1.5) - 1 : -tween.easeOutSine(qwqOut.second * 1.5)) *
+      (timerIn.second < 0.67
+        ? tween.easeOutSine(timerIn.second * 1.5) - 1
+        : -tween.easeOutSine(timerOut.second * 1.5)) *
       1.75
   );
-  ctxos.drawImage(res["ProgressBar"], ((qwq[5] ? duration - timeBgm : timeBgm) / duration) * 1920 - 1920, 0);
+  ctxos.drawImage(res["ProgressBar"], ((icwCfg[5] ? duration - timeBgm : timeBgm) / duration) * 1920 - 1920, 0);
   //绘制文字
   ctxos.resetTransform();
   ctxos.fillStyle = "#fff";
   //开头过渡动画
-  if (qwqIn.second < 3) {
-    if (qwqIn.second < 0.67) ctxos.globalAlpha = tween.easeOutSine(qwqIn.second * 1.5);
-    else if (qwqIn.second >= 2.5) ctxos.globalAlpha = tween.easeOutSine(6 - qwqIn.second * 2);
+  if (timerIn.second < 3) {
+    if (timerIn.second < 0.67) ctxos.globalAlpha = tween.easeOutSine(timerIn.second * 1.5);
+    else if (timerIn.second >= 2.5) ctxos.globalAlpha = tween.easeOutSine(6 - timerIn.second * 2);
     const name = inputName.value || inputName.placeholder;
     const artist = inputArtist.value;
-    const illustrator = `Illustration designed by ${inputIllustrator.value || inputIllustrator.placeholder}`;
-    const charter = `Level designed by ${inputCharter.value || inputCharter.placeholder}`;
+    const illustrator = `Illustrator - ${inputIllustrator.value || inputIllustrator.placeholder}`;
+    const charter = `Chart - ${inputCharter.value || inputCharter.placeholder}`;
     ctxos.textAlign = "center";
     //曲名
     ctxos.textBaseline = "alphabetic";
@@ -1732,23 +1772,41 @@ function drawGameStart(now) {
     const dxa = ctxos.measureText(artist).width;
     if (dxa > canvasos.width - lineScale * 1.5)
       ctxos.font = `${((lineScale * 0.55) / dxa) * (canvasos.width - lineScale * 1.5)}px Custom,Noto Sans SC`;
-    ctxos.fillText(artist, app.wlen, app.hlen * 0.75 + lineScale * 0.85);
+    ctxos.fillText(artist, app.wlen, app.hlen * 0.75 + lineScale * 0.45);
     ctxos.font = `${lineScale * 0.55}px Custom,Noto Sans SC`;
     const dxi = ctxos.measureText(illustrator).width;
     if (dxi > canvasos.width - lineScale * 1.5)
       ctxos.font = `${((lineScale * 0.55) / dxi) * (canvasos.width - lineScale * 1.5)}px Custom,Noto Sans SC`;
-    ctxos.fillText(illustrator, app.wlen, app.hlen * 1.25 + lineScale * 0.15);
+    ctxos.fillText(illustrator, app.wlen, app.hlen * 1.25 - lineScale * 0.25);
     ctxos.font = `${lineScale * 0.55}px Custom,Noto Sans SC`;
     const dxc = ctxos.measureText(charter).width;
     if (dxc > canvasos.width - lineScale * 1.5)
       ctxos.font = `${((lineScale * 0.55) / dxc) * (canvasos.width - lineScale * 1.5)}px Custom,Noto Sans SC`;
-    ctxos.fillText(charter, app.wlen, app.hlen * 1.25 + lineScale * 1.0);
+    ctxos.fillText(charter, app.wlen, app.hlen * 1.25 + lineScale * 0.6);
+
+    // Display mods
+
+    const tx = getModsText() || "No Mod";
+    const dxm = ctxos.measureText(tx).width;
+    if (dxm > canvasos.width - lineScale * 1.5)
+      ctxos.font = `${((lineScale * 0.55) / dxi) * (canvasos.width - lineScale * 1.5)}px Custom,Noto Sans SC`;
+    ctxos.fillText(tx, app.wlen, app.hlen * 1.25 + lineScale * 2.15);
+    ctxos.font = `${lineScale * 0.55}px Custom,Noto Sans SC`;
+
+    if (isTooHard()) {
+      const dxmr = ctxos.measureText(tx).width;
+      if (dxmr > canvasos.width - lineScale * 1.5)
+        ctxos.font = `${((lineScale * 0.55) / dxi) * (canvasos.width - lineScale * 1.5)}px Custom,Noto Sans SC`;
+      ctxos.fillText("所选模组难度极大 请谨慎挑战", app.wlen, app.hlen * 1.25 + lineScale * 3);
+      ctxos.font = `${lineScale * 0.55}px Custom,Noto Sans SC`;
+    }
+
     //判定线(装饰用)
     ctxos.globalAlpha = 1;
     ctxos.setTransform(1, 0, 0, 1, app.wlen, app.hlen);
-    const imgW = lineScale * 48 * (qwqIn.second < 0.67 ? tween.easeInSine(qwqIn.second * 1.5) : 1);
+    const imgW = lineScale * 48 * (timerIn.second < 0.67 ? tween.easeInSine(timerIn.second * 1.5) : 1);
     const imgH = lineScale * 0.15; //0.1333...
-    if (qwqIn.second >= 2.5) ctxos.globalAlpha = tween.easeOutSine(6 - qwqIn.second * 2);
+    if (timerIn.second >= 2.5) ctxos.globalAlpha = tween.easeOutSine(6 - timerIn.second * 2);
     ctxos.drawImage(lineColor.checked ? res["JudgeLineMP"] : res["JudgeLine"], -imgW / 2, -imgH / 2, imgW, imgH);
   }
   //绘制分数和combo以及暂停按钮
@@ -1760,7 +1818,9 @@ function drawGameStart(now) {
     1,
     0,
     lineScale *
-      (qwqIn.second < 0.67 ? tween.easeOutSine(qwqIn.second * 1.5) - 1 : -tween.easeOutSine(qwqOut.second * 1.5)) *
+      (timerIn.second < 0.67
+        ? tween.easeOutSine(timerIn.second * 1.5) - 1
+        : -tween.easeOutSine(timerOut.second * 1.5)) *
       1.75
   );
   ctxos.textBaseline = "alphabetic";
@@ -1776,7 +1836,7 @@ function drawGameStart(now) {
     ctxos.font = `${lineScale * 1.32}px Custom,Noto Sans SC`;
     ctxos.fillText(stat.getComboText(), app.wlen, lineScale * 1.375);
     ctxos.globalAlpha =
-      qwqIn.second < 0.67 ? tween.easeOutSine(qwqIn.second * 1.5) : 1 - tween.easeOutSine(qwqOut.second * 1.5);
+      timerIn.second < 0.67 ? tween.easeOutSine(timerIn.second * 1.5) : 1 - tween.easeOutSine(timerOut.second * 1.5);
     ctxos.font = `${lineScale * 0.66}px Custom,Noto Sans SC`;
     ctxos.fillText(app.playMode === 1 ? "Auto" : app.playMode == 4 ? "Replay" : "combo", app.wlen, lineScale * 2.05);
   }
@@ -1789,7 +1849,7 @@ function drawGameStart(now) {
     1,
     0,
     lineScale *
-      (qwqIn.second < 0.67 ? 1 - tween.easeOutSine(qwqIn.second * 1.5) : tween.easeOutSine(qwqOut.second * 1.5)) *
+      (timerIn.second < 0.67 ? 1 - tween.easeOutSine(timerIn.second * 1.5) : tween.easeOutSine(timerOut.second * 1.5)) *
       1.75
   );
   ctxos.textBaseline = "alphabetic";
@@ -1807,13 +1867,13 @@ function drawGameStart(now) {
   ctxos.fillText(inputName.value || inputName.placeholder, lineScale * 0.65, canvasos.height - lineScale * 0.66);
   ctxos.resetTransform();
   //绘制时间和帧率以及note打击数
-  if (qwqIn.second < 0.67) ctxos.globalAlpha = tween.easeOutSine(qwqIn.second * 1.5);
-  else ctxos.globalAlpha = 1 - tween.easeOutSine(qwqOut.second * 1.5);
+  if (timerIn.second < 0.67) ctxos.globalAlpha = tween.easeOutSine(timerIn.second * 1.5);
+  else ctxos.globalAlpha = 1 - tween.easeOutSine(timerOut.second * 1.5);
   ctxos.textBaseline = "middle";
   ctxos.font = `${lineScale * 0.4}px Custom,Noto Sans SC`;
   ctxos.textAlign = "left";
   ctxos.fillText(
-    `${time2Str(qwq[5] ? duration - timeBgm : timeBgm)}/${time2Str(duration)}${scfg()}`,
+    `${time2Str(icwCfg[5] ? duration - timeBgm : timeBgm)}/${time2Str(duration)}${scfg()}`,
     lineScale * 0.05,
     lineScale * 0.5
   );
@@ -1850,9 +1910,9 @@ function drawGameStart(now) {
   //判定线函数，undefined/0:默认,1:非,2:恒成立
   function drawLine(bool) {
     ctxos.globalAlpha = 1;
-    const tw = 1 - tween.easeOutSine(qwqOut.second * 1.5);
+    const tw = 1 - tween.easeOutSine(timerOut.second * 1.5);
     for (const i of app.lines) {
-      if (bool ^ i.imageD && qwqOut.second < 0.67) {
+      if (bool ^ i.imageD && timerOut.second < 0.67) {
         ctxos.globalAlpha = i.alpha;
         ctxos.setTransform(
           i.cosr * tw,
@@ -1897,8 +1957,8 @@ function drawEndPlay() {
     audio.play(res[`LevelOver${difficulty < 0 ? 2 : difficulty}_v1`], {
       loop: true,
     });
-    qwqEnd.reset();
-    qwqEnd.play();
+    timerEnd.reset();
+    timerEnd.play();
     stat.level = Number(levelText.match(/\d+$/));
     isRankingsReady = stat.getData(app.playMode === 1, selectspeed.value, app);
   }, 1000);
@@ -1925,17 +1985,17 @@ function drawRankings(statData) {
     canvasos.height / k,
     0
   );
-  ctxos.fillRect(0, 0, 1, tween.easeOutCubic(range((qwqEnd.second - 0.13) * 0.94)));
+  ctxos.fillRect(0, 0, 1, tween.easeOutCubic(range((timerEnd.second - 0.13) * 0.94)));
   ctxos.resetTransform();
   ctxos.globalCompositeOperation = "destination-over";
   const qwq0 = (canvasos.width - canvasos.height / k) / (16 - 9 / k);
   ctxos.setTransform(qwq0 / 120, 0, 0, qwq0 / 120, app.wlen - qwq0 * 8, app.hlen - qwq0 * 4.5); //?
   ctxos.drawImage(res["LevelOver4"], 183, 42, 1184, 228);
-  ctxos.globalAlpha = range((qwqEnd.second - 0.27) / 0.83);
+  ctxos.globalAlpha = range((timerEnd.second - 0.27) / 0.83);
   ctxos.drawImage(res["LevelOver1"], 102, 378);
   ctxos.globalCompositeOperation = "source-over";
   ctxos.globalAlpha = 1;
-  ctxos.drawImage(res["LevelOver5"], 700 * tween.easeOutCubic(range(qwqEnd.second * 1.25)) - 369, 91, 20, 80);
+  ctxos.drawImage(res["LevelOver5"], 700 * tween.easeOutCubic(range(timerEnd.second * 1.25)) - 369, 91, 20, 80);
   //曲名和等级
   ctxos.fillStyle = "#fff";
   ctxos.textBaseline = "middle";
@@ -1945,31 +2005,31 @@ function drawRankings(statData) {
   if (dxsnm > 1500) ctxos.font = `${(80 / dxsnm) * 1500}px Custom,Noto Sans SC`;
   ctxos.fillText(
     inputName.value || inputName.placeholder,
-    700 * tween.easeOutCubic(range(qwqEnd.second * 1.25)) - 320,
+    700 * tween.easeOutCubic(range(timerEnd.second * 1.25)) - 320,
     145
   );
   ctxos.font = "30px Custom,Noto Sans SC";
   const dxlvl = ctxos.measureText(levelText).width;
   if (dxlvl > 750) ctxos.font = `${(30 / dxlvl) * 750}px Custom,Noto Sans SC`;
-  ctxos.fillText(levelText, 700 * tween.easeOutCubic(range(qwqEnd.second * 1.25)) - 317, 208);
+  ctxos.fillText(levelText, 700 * tween.easeOutCubic(range(timerEnd.second * 1.25)) - 317, 208);
   ctxos.font = "30px Custom,Noto Sans SC";
   //Rank图标
-  ctxos.globalAlpha = range((qwqEnd.second - 1.87) * 3.75);
-  const qwq2 = 293 + range((qwqEnd.second - 1.87) * 3.75) * 100;
-  const qwq3 = 410 - range((qwqEnd.second - 1.87) * 2.14) * 164;
+  ctxos.globalAlpha = range((timerEnd.second - 1.87) * 3.75);
+  const qwq2 = 293 + range((timerEnd.second - 1.87) * 3.75) * 100;
+  const qwq3 = 410 - range((timerEnd.second - 1.87) * 2.14) * 164;
   ctxos.drawImage(res["LevelOver3"], 661 - qwq2 / 2, 545 - qwq2 / 2, qwq2, qwq2);
   ctxos.drawImage(res["Ranks"][stat.getRankStatus(app)], 661 - qwq3 / 2, 545 - qwq3 / 2, qwq3, qwq3);
   //各种数据
-  ctxos.globalAlpha = range((qwqEnd.second - 0.87) * 2.5);
+  ctxos.globalAlpha = range((timerEnd.second - 0.87) * 2.5);
   ctxos.fillStyle = statData.newBestColor;
   ctxos.fillText(statData.newBestStr, 898, 428);
   ctxos.fillStyle = "#fff";
   ctxos.textAlign = "center";
   ctxos.fillText(statData.scoreBest, 1180, 428);
-  ctxos.globalAlpha = range((qwqEnd.second - 1.87) * 2.5);
+  ctxos.globalAlpha = range((timerEnd.second - 1.87) * 2.5);
   ctxos.textAlign = "right";
   ctxos.fillText(statData.scoreDelta, 1414, 428);
-  ctxos.globalAlpha = range((qwqEnd.second - 0.95) * 1.5);
+  ctxos.globalAlpha = range((timerEnd.second - 0.95) * 1.5);
   ctxos.textAlign = "left";
   ctxos.fillText(stat.accStr, 352, 545);
   ctxos.fillText(stat.maxcombo, 1528, 545);
@@ -1984,30 +2044,30 @@ function drawRankings(statData) {
   ctxos.fillStyle = "#fff";
   ctxos.textAlign = "center";
   ctxos.font = "86px Custom,Noto Sans SC";
-  ctxos.globalAlpha = range((qwqEnd.second - 1.12) * 2.0);
+  ctxos.globalAlpha = range((timerEnd.second - 1.12) * 2.0);
   ctxos.fillText(stat.scoreStr, 1075, 554);
   ctxos.font = "26px Custom,Noto Sans SC";
-  ctxos.globalAlpha = range((qwqEnd.second - 0.87) * 2.5);
+  ctxos.globalAlpha = range((timerEnd.second - 0.87) * 2.5);
   ctxos.fillText(stat.perfect, 891, 645);
-  ctxos.globalAlpha = range((qwqEnd.second - 1.07) * 2.5);
+  ctxos.globalAlpha = range((timerEnd.second - 1.07) * 2.5);
   ctxos.fillText(stat.good, 1043, 645);
-  ctxos.globalAlpha = range((qwqEnd.second - 1.27) * 2.5);
+  ctxos.globalAlpha = range((timerEnd.second - 1.27) * 2.5);
   ctxos.fillText(stat.noteRank[6], 1196, 645);
-  ctxos.globalAlpha = range((qwqEnd.second - 1.47) * 2.5);
+  ctxos.globalAlpha = range((timerEnd.second - 1.47) * 2.5);
   ctxos.fillText(stat.noteRank[2], 1349, 645);
   ctxos.font = "22px Custom,Noto Sans SC";
-  const qwq4 = range((qwq[3] > 0 ? qwqEnd.second - qwq[3] : 0.2 - qwqEnd.second - qwq[3]) * 5.0);
-  ctxos.globalAlpha = 0.8 * range((qwqEnd.second - 0.87) * 2.5) * qwq4;
+  const qwq4 = range((icwCfg[3] > 0 ? timerEnd.second - icwCfg[3] : 0.2 - timerEnd.second - icwCfg[3]) * 5.0);
+  ctxos.globalAlpha = 0.8 * range((timerEnd.second - 0.87) * 2.5) * qwq4;
   ctxos.fillStyle = "#696";
   ctxos.fill(new Path2D("M841,718s-10,0-10,10v80s0,10,10,10h100s10,0,10-10v-80s0-10-10-10h-40l-10-20-10,20h-40z"));
-  ctxos.globalAlpha = 0.8 * range((qwqEnd.second - 1.07) * 2.5) * qwq4;
+  ctxos.globalAlpha = 0.8 * range((timerEnd.second - 1.07) * 2.5) * qwq4;
   ctxos.fillStyle = "#669";
   ctxos.fill(new Path2D("M993,718s-10,0-10,10v80s0,10,10,10h100s10,0,10-10v-80s0-10-10-10h-40l-10-20-10,20h-40z"));
   ctxos.fillStyle = "#fff";
-  ctxos.globalAlpha = range((qwqEnd.second - 0.97) * 2.5) * qwq4;
+  ctxos.globalAlpha = range((timerEnd.second - 0.97) * 2.5) * qwq4;
   ctxos.fillText("Early: " + stat.noteRank[5], 891, 755);
   ctxos.fillText("Late: " + stat.noteRank[1], 891, 788);
-  ctxos.globalAlpha = range((qwqEnd.second - 1.17) * 2.5) * qwq4;
+  ctxos.globalAlpha = range((timerEnd.second - 1.17) * 2.5) * qwq4;
   ctxos.fillText("Early: " + stat.noteRank[7], 1043, 755);
   ctxos.fillText("Late: " + stat.noteRank[3], 1043, 788);
   ctxos.resetTransform();
