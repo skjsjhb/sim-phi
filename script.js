@@ -13,12 +13,7 @@ import {
 } from "./js/common.js";
 import { uploader, readZip } from "./js/reader.js";
 import InterAct from "./utils/interact.js";
-self._i = [
-  "Phi\x67ros 模拟器 Mod 版",
-  [1, 4, 22, "b18"],
-  1611795955,
-  1675547193,
-];
+self._i = ["Phi\x67ros 模拟器 Mod 版", [1, 4, 22, "b18"], 1611795955, 1675547193];
 const $ = (query) => document.getElementById(query);
 const $$ = (query) => document.body.querySelector(query);
 const $$$ = (query) => document.body.querySelectorAll(query);
@@ -38,8 +33,7 @@ for (const i of $("view-nav").children) {
       doc.classList.add("hide");
       msg.classList.remove("hide");
     } else {
-      if (doc.getAttribute("src") !== `docs/${i.id}.html`)
-        doc.src = `docs/${i.id}.html`;
+      if (doc.getAttribute("src") !== `docs/${i.id}.html`) doc.src = `docs/${i.id}.html`;
       msg.classList.add("hide");
       doc.classList.remove("hide");
     }
@@ -99,8 +93,7 @@ const msgHandler = {
       this.nodeText.innerHTML = msg;
     } else {
       this.nodeText.className = num ? "warning" : "accept";
-      this.nodeText.innerHTML =
-        msg + (num ? `（发现${num}个问题，点击查看）` : "");
+      this.nodeText.innerHTML = msg + (num ? `（发现${num}个问题，点击查看）` : "");
       this.lastMessage = msg;
     }
   },
@@ -156,8 +149,7 @@ selectflip.addEventListener("change", (evt) => {
 });
 const selectspeed = $("select-speed");
 selectspeed.addEventListener("change", (evt) => {
-  app.speed =
-    (parseFloat(evt.target.value || "1") || 1) * app.getModsTimingModifier();
+  app.speed = (parseFloat(evt.target.value || "1") || 1) * app.getModsTimingModifier();
 });
 const scfg = function () {
   const arr = [];
@@ -251,20 +243,7 @@ $("autoplay").addEventListener("change", (evt) => {
 $("replay").addEventListener("change", (evt) => {
   app.playMode = evt.target.checked ? 4 : 0;
 });
-for (const m of [
-  "ez",
-  "ht",
-  "fo",
-  "hr",
-  "dt",
-  "hd",
-  "eb",
-  "rl",
-  "nf",
-  "fl",
-  "sk",
-  "is",
-]) {
+for (const m of ["ez", "ht", "fo", "hr", "dt", "hd", "eb", "rl", "nf", "fl", "sk", "is"]) {
   $("mod-" + m)?.addEventListener("change", (e) => {
     if (!app.mods.has(m) && e.target.checked) {
       app.mods.add(m);
@@ -316,11 +295,7 @@ async function checkSupport() {
     const errmsg2 = `${name}组件加载失败，请检查您的网络连接然后重试：`;
     const errmsg3 = `${name}组件加载失败，请检查浏览器兼容性`;
     msgHandler.sendMessage(`加载${name}组件...`);
-    if (
-      !(await loadJS(urls).catch((e) =>
-        msgHandler.sendError(errmsg1, e.message.replace(/.+/, errmsg2), true)
-      ))
-    )
+    if (!(await loadJS(urls).catch((e) => msgHandler.sendError(errmsg1, e.message.replace(/.+/, errmsg2), true))))
       return false;
     if (!check()) return true;
     return msgHandler.sendError(errmsg1, errmsg3, true);
@@ -329,9 +304,7 @@ async function checkSupport() {
   //兼容性检测
   msgHandler.sendMessage("检查浏览器兼容性...");
   const isMobile =
-    navigator.standalone !== undefined ||
-    (navigator.platform.indexOf("Linux") > -1 &&
-      navigator.maxTouchPoints === 5);
+    navigator.standalone !== undefined || (navigator.platform.indexOf("Linux") > -1 && navigator.maxTouchPoints === 5);
   if (isMobile) $("uploader-select").style.display = "none";
   if (navigator.userAgent.indexOf("MiuiBrowser") > -1) {
     //实测 v17.1.8 问题仍然存在，v17.4.80113 问题已修复
@@ -340,32 +313,14 @@ async function checkSupport() {
     if (version && version[1] >= 17.4);
     else msgHandler.sendWarning(text);
   }
-  if (
-    !(await loadPlugin("ImageBitmap兼容", urls.bitmap, () =>
-      isUndefined("createImageBitmap")
-    ))
-  )
-    return -1;
-  if (
-    !(await loadPlugin("StackBlur", urls.blur, () => isUndefined("StackBlur")))
-  )
-    return -2;
+  if (!(await loadPlugin("ImageBitmap兼容", urls.bitmap, () => isUndefined("createImageBitmap")))) return -1;
+  if (!(await loadPlugin("StackBlur", urls.blur, () => isUndefined("StackBlur")))) return -2;
   if (!(await loadPlugin("md5", urls.md5, () => isUndefined("md5")))) return -3;
   msgHandler.sendMessage("加载声音组件...");
   const oggCompatible = !!new Audio().canPlayType("audio/ogg");
-  if (
-    !(await loadPlugin(
-      "ogg格式兼容",
-      "./oggmented-bundle.js",
-      () => !oggCompatible && isUndefined("oggmented")
-    ))
-  )
+  if (!(await loadPlugin("ogg格式兼容", "./oggmented-bundle.js", () => !oggCompatible && isUndefined("oggmented"))))
     return -4;
-  audio.init(
-    oggCompatible
-      ? self.AudioContext || self.webkitAudioContext
-      : oggmented.OggmentedAudioContext
-  ); //兼容Safari
+  audio.init(oggCompatible ? self.AudioContext || self.webkitAudioContext : oggmented.OggmentedAudioContext); //兼容Safari
   const orientSupported = await orientation.checkSupport();
   if (!orientSupported) {
     $("lockOri").checked = false;
@@ -434,15 +389,10 @@ const stage = {
   aspectRatio: 0,
   resize(ratio) {
     if (ratio) this.aspectRatio = Number(ratio) || 16 / 9;
-    const stageWidth = Math.min(
-      854,
-      document.documentElement.clientWidth * 0.8
-    );
+    const stageWidth = Math.min(854, document.documentElement.clientWidth * 0.8);
     const stageHeight = stageWidth / this.aspectRatio;
-    if (app.isFull)
-      app.stage.style.cssText = ";position:fixed;top:0;left:0;bottom:0;right:0";
-    else
-      app.stage.style.cssText = `;width:${stageWidth.toFixed()}px;height:${stageHeight.toFixed()}px`;
+    if (app.isFull) app.stage.style.cssText = ";position:fixed;top:0;left:0;bottom:0;right:0";
+    else app.stage.style.cssText = `;width:${stageWidth.toFixed()}px;height:${stageHeight.toFixed()}px`;
   },
 };
 stage.resize(1.777778); //qwq
@@ -462,9 +412,7 @@ self.addEventListener("resize", () => stage.resize());
   /** @type {((_:ProgressEvent<FileReader>,_:File) => void)} */
   uploader.onprogress = function (evt, i) {
     //显示加载文件进度
-    msgHandler.sendMessage(
-      `加载文件：${Math.floor((evt.loaded / evt.total) * 100)}%`
-    );
+    msgHandler.sendMessage(`加载文件：${Math.floor((evt.loaded / evt.total) * 100)}%`);
   };
   /** @type {((_:ProgressEvent<FileReader>,_:File) => void)} */
   uploader.onload = function (evt, i) {
@@ -497,6 +445,10 @@ self.addEventListener("resize", () => stage.resize());
         break;
       case "info":
         chartInfoData.push(...data.data);
+        break;
+      case "media":
+        bgms.set(data.name, data.data);
+        selectbgm.appendChild(createOption(data.name, data.name));
         break;
       case "audio":
         bgms.set(data.name, data.data);
@@ -541,10 +493,7 @@ self.addEventListener("resize", () => stage.resize());
 const icwCfg = [true, false, 3, 0, 0, 0];
 
 $$(".title").addEventListener("click", function () {
-  if (!--icwCfg[2])
-    $(
-      new URLSearchParams(location.search).has("test") ? "demo" : "legacy"
-    ).classList.remove("hide");
+  if (!--icwCfg[2]) $(new URLSearchParams(location.search).has("test") ? "demo" : "legacy").classList.remove("hide");
 });
 //qwq end
 const exitFull = () => {
@@ -591,20 +540,10 @@ const specialClick = {
   qwq(offsetX, offsetY) {
     const { lineScale } = app;
     if (offsetX < lineScale * 1.5 && offsetY < lineScale * 1.5) this.click(0);
-    if (offsetX > canvasos.width - lineScale * 1.5 && offsetY < lineScale * 1.5)
-      this.click(1);
-    if (
-      offsetX < lineScale * 1.5 &&
-      offsetY > canvasos.height - lineScale * 1.5
-    )
-      this.click(2);
-    if (
-      offsetX > canvasos.width - lineScale * 1.5 &&
-      offsetY > canvasos.height - lineScale * 1.5
-    )
-      this.click(3);
-    if (timerEnd.second > 0)
-      icwCfg[3] = icwCfg[3] > 0 ? -timerEnd.second : timerEnd.second;
+    if (offsetX > canvasos.width - lineScale * 1.5 && offsetY < lineScale * 1.5) this.click(1);
+    if (offsetX < lineScale * 1.5 && offsetY > canvasos.height - lineScale * 1.5) this.click(2);
+    if (offsetX > canvasos.width - lineScale * 1.5 && offsetY > canvasos.height - lineScale * 1.5) this.click(3);
+    if (timerEnd.second > 0) icwCfg[3] = icwCfg[3] > 0 ? -timerEnd.second : timerEnd.second;
   },
 };
 const hitManager = new simphi.HitManager();
@@ -637,8 +576,7 @@ function getJudgeDistance(judgeEvent, note) {
   const { offsetX, offsetY } = judgeEvent;
   const { offsetX: x, offsetY: y, cosr, sinr } = note;
   return (
-    Math.abs((offsetX - x) * cosr + (offsetY - y) * sinr) +
-      Math.abs((offsetX - x) * sinr - (offsetY - y) * cosr) || 0
+    Math.abs((offsetX - x) * cosr + (offsetY - y) * sinr) + Math.abs((offsetX - x) * sinr - (offsetY - y) * cosr) || 0
   );
 }
 
@@ -671,19 +609,14 @@ const judgeManager = {
         if (i.scored) continue;
         const deltaTime = i.realTime - realTime;
         if (i.type === 1) {
-          if (deltaTime < dispTime)
-            list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 1);
+          if (deltaTime < dispTime) list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 1);
         } else if (i.type === 2) {
-          if (deltaTime < dispTime)
-            list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 2);
+          if (deltaTime < dispTime) list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 2);
         } else if (i.type === 3) {
-          if (i.holdTapTime)
-            list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 2);
-          else if (deltaTime < dispTime)
-            list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 1);
+          if (i.holdTapTime) list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 2);
+          else if (deltaTime < dispTime) list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 1);
         } else if (i.type === 4) {
-          if (deltaTime < dispTime)
-            list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 3);
+          if (deltaTime < dispTime) list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 3);
         }
       }
     } else {
@@ -694,8 +627,7 @@ const judgeManager = {
           if (i.scored) continue;
           const deltaTime = i.realTime - realTime;
           if (i.type === 4) {
-            if (deltaTime < dispTime)
-              list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 3);
+            if (deltaTime < dispTime) list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 3);
           }
         }
       }
@@ -706,8 +638,7 @@ const judgeManager = {
           if (i.scored) continue;
           const deltaTime = i.realTime - realTime;
           if (i.type === 2) {
-            if (deltaTime < dispTime)
-              list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 2);
+            if (deltaTime < dispTime) list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 2);
           }
         }
       }
@@ -718,10 +649,7 @@ const judgeManager = {
           const deltaTime = r[0] - realTime;
           if (deltaTime < Math.min(frameTimer.disp, 0.04)) {
             // Instantly
-            list[list.length] = new JudgeEvent(
-              ...localizeCoord(r[1], r[2]),
-              r[3]
-            );
+            list[list.length] = new JudgeEvent(...localizeCoord(r[1], r[2]), r[3]);
             r.push(1); // Finish bit
           }
         }
@@ -730,35 +658,19 @@ const judgeManager = {
           for (const i of hitManager.list) {
             if (!i.isTapped) {
               list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 1);
-              this.replay.push([
-                realTime.toFixed(4),
-                ...normalizeCoord(i.offsetX, i.offsetY),
-                1,
-              ]);
+              this.replay.push([realTime.toFixed(4), ...normalizeCoord(i.offsetX, i.offsetY), 1]);
             }
             if (i.isActive) {
               list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 2);
-              this.replay.push([
-                realTime.toFixed(4),
-                ...normalizeCoord(i.offsetX, i.offsetY),
-                2,
-              ]);
+              this.replay.push([realTime.toFixed(4), ...normalizeCoord(i.offsetX, i.offsetY), 2]);
             }
             if (i.type === "keyboard") {
               list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 3);
-              this.replay.push([
-                realTime.toFixed(4),
-                ...normalizeCoord(i.offsetX, i.offsetY),
-                3,
-              ]);
+              this.replay.push([realTime.toFixed(4), ...normalizeCoord(i.offsetX, i.offsetY), 3]);
             }
             if (i.flicking && !i.flicked) {
               list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 3, i);
-              this.replay.push([
-                realTime.toFixed(4),
-                ...normalizeCoord(i.offsetX, i.offsetY),
-                3,
-              ]);
+              this.replay.push([realTime.toFixed(4), ...normalizeCoord(i.offsetX, i.offsetY), 3]);
             }
           }
         }
@@ -810,7 +722,7 @@ const judgeManager = {
         }
       } else if (note.type === 4) {
         //Flick音符
-        if (deltaTime > 0) {
+        if (deltaTime > 0 || note.status !== 4) {
           for (const judgeEvent of list) {
             if (judgeEvent.type !== 1) continue; //跳过非Tap判定
             if (getJudgeOffset(judgeEvent, note) > width) continue;
@@ -866,22 +778,15 @@ const judgeManager = {
         //Hold音符
         if (note.type === 3 && note.holdTapTime) {
           //是否触发头判
-          if (
-            (performance.now() - note.holdTapTime) * note.holdTime >=
-            1.6e4 * note.realHoldTime
-          ) {
+          if ((performance.now() - note.holdTapTime) * note.holdTime >= 1.6e4 * note.realHoldTime) {
             //间隔时间与bpm成反比
-            if (note.holdStatus % 4 === 0)
-              hitEvents1.push(HitEvent1.perfect(note.projectX, note.projectY));
-            else if (note.holdStatus % 4 === 1)
-              hitEvents1.push(HitEvent1.perfect(note.projectX, note.projectY));
-            else if (note.holdStatus % 4 === 3)
-              hitEvents1.push(HitEvent1.good(note.projectX, note.projectY));
+            if (note.holdStatus % 4 === 0) hitEvents1.push(HitEvent1.perfect(note.projectX, note.projectY));
+            else if (note.holdStatus % 4 === 1) hitEvents1.push(HitEvent1.perfect(note.projectX, note.projectY));
+            else if (note.holdStatus % 4 === 3) hitEvents1.push(HitEvent1.good(note.projectX, note.projectY));
             note.holdTapTime = performance.now();
           }
           if (deltaTime + note.realHoldTime < jdm.touch) {
-            if (!note.status)
-              stat.addCombo((note.status = note.holdStatus), 3, app);
+            if (!note.status) stat.addCombo((note.status = note.holdStatus), 3, app);
             if (deltaTime + note.realHoldTime < 0) note.scored = true;
             continue;
           }
@@ -926,47 +831,27 @@ const judgeManager = {
             noteJudge.status = 6; //console.log('Bad', i.name);
             noteJudge.badtime = performance.now();
           } else {
-            stat.addDisp(
-              Math.max(deltaTime2, (-1 - noteJudge.frameCount) * 0.04 || 0)
-            );
+            stat.addDisp(Math.max(deltaTime2, (-1 - noteJudge.frameCount) * 0.04 || 0));
             audio.play(res["HitSong0"], { gainrate: app.soundVolume });
             if (deltaTime2 > jdm.perfect) {
               noteJudge.holdStatus = 7; //console.log('Good(Early)', i.name);
-              hitEvents1.push(
-                HitEvent1.good(noteJudge.projectX, noteJudge.projectY)
-              );
-              hitEvents2.push(
-                HitEvent2.early(noteJudge.projectX, noteJudge.projectY)
-              );
+              hitEvents1.push(HitEvent1.good(noteJudge.projectX, noteJudge.projectY));
+              hitEvents2.push(HitEvent2.early(noteJudge.projectX, noteJudge.projectY));
             } else if (deltaTime2 > jdm.rainbow) {
               noteJudge.holdStatus = 5; //console.log('Perfect(Early)', i.name);
-              hitEvents1.push(
-                HitEvent1.perfect(noteJudge.projectX, noteJudge.projectY)
-              );
-              hitEvents2.push(
-                HitEvent2.early(noteJudge.projectX, noteJudge.projectY)
-              );
+              hitEvents1.push(HitEvent1.perfect(noteJudge.projectX, noteJudge.projectY));
+              hitEvents2.push(HitEvent2.early(noteJudge.projectX, noteJudge.projectY));
             } else if (deltaTime2 > -jdm.rainbow || noteJudge.frameCount < 1) {
               noteJudge.holdStatus = 4; //console.log('Perfect(Max)', i.name);
-              hitEvents1.push(
-                HitEvent1.perfect(noteJudge.projectX, noteJudge.projectY)
-              );
+              hitEvents1.push(HitEvent1.perfect(noteJudge.projectX, noteJudge.projectY));
             } else if (deltaTime2 > -jdm.perfect || noteJudge.frameCount < 2) {
               noteJudge.holdStatus = 1; //console.log('Perfect(Late)', i.name);
-              hitEvents1.push(
-                HitEvent1.perfect(noteJudge.projectX, noteJudge.projectY)
-              );
-              hitEvents2.push(
-                HitEvent2.late(noteJudge.projectX, noteJudge.projectY)
-              );
+              hitEvents1.push(HitEvent1.perfect(noteJudge.projectX, noteJudge.projectY));
+              hitEvents2.push(HitEvent2.late(noteJudge.projectX, noteJudge.projectY));
             } else {
               noteJudge.holdStatus = 3; //console.log('Good(Late)', i.name);
-              hitEvents1.push(
-                HitEvent1.good(noteJudge.projectX, noteJudge.projectY)
-              );
-              hitEvents2.push(
-                HitEvent2.late(noteJudge.projectX, noteJudge.projectY)
-              );
+              hitEvents1.push(HitEvent1.good(noteJudge.projectX, noteJudge.projectY));
+              hitEvents2.push(HitEvent2.late(noteJudge.projectX, noteJudge.projectY));
             }
             if (noteJudge.type === 1) noteJudge.status = noteJudge.holdStatus;
           }
@@ -996,11 +881,9 @@ function dlReplay() {
   const st = JSON.stringify({
     meta: {
       map: selectchart.value,
-      canonicalTitle: `${inputName.value || inputName.placeholder} [${
-        selectLevel.value
-      } Lv.${selectDifficulty.value}] (${
-        inputArtist.value || inputArtist.placeholder
-      } // ${inputCharter.value || inputCharter.placeholder})`,
+      canonicalTitle: `${inputName.value || inputName.placeholder} [${selectLevel.value} Lv.${
+        selectDifficulty.value
+      }] (${inputArtist.value || inputArtist.placeholder} // ${inputCharter.value || inputCharter.placeholder})`,
       bgm: selectbgm.value,
       bg: selectbg.value,
       flip: selectflip.value,
@@ -1017,15 +900,9 @@ function dlReplay() {
     }),
   });
   var element = document.createElement("a");
-  element.href =
-    "data:application/x-sim-phi-replay;charset=utf-8," + encodeURIComponent(st);
+  element.href = "data:application/x-sim-phi-replay;charset=utf-8," + encodeURIComponent(st);
   element.download =
-    (inputName.value || inputName.placeholder) +
-    " " +
-    levelText +
-    " " +
-    Math.round(stat.getScoreNum(app)) +
-    ".phr";
+    (inputName.value || inputName.placeholder) + " " + levelText + " " + Math.round(stat.getScoreNum(app)) + ".phr";
 
   element.style.display = "none";
   document.body.appendChild(element);
@@ -1037,11 +914,7 @@ function importReplay(data) {
   const { meta, ops } = JSON.parse(data);
   if (!selectchart.innerHTML.includes(meta.map)) {
     msgHandler.sendError(
-      "你没有对应的谱面! 你需要下面这首曲子的谱面：<br/>" +
-        meta.canonicalTitle +
-        "<br/>(谱面 ID: " +
-        meta.map +
-        ")"
+      "你没有对应的谱面! 你需要下面这首曲子的谱面：<br/>" + meta.canonicalTitle + "<br/>(谱面 ID: " + meta.map + ")"
     );
     return;
   }
@@ -1066,9 +939,7 @@ function importReplay(data) {
   $("replay").checked = true;
   $("autoplay").checked = false;
   app.playMode = 4; // Replay
-  msgHandler.sendMessage(
-    `已加载回放 分数：${meta.score} 最大连击：${meta.maxCombo} 准确率：${meta.acc}`
-  );
+  msgHandler.sendMessage(`已加载回放 分数：${meta.score} 最大连击：${meta.maxCombo} 准确率：${meta.acc}`);
   judgeManager.replay = ops.map((s) => {
     return s.split(",").map((i, a) => {
       return a === 3 ? parseInt(i) : parseFloat(i);
@@ -1160,22 +1031,10 @@ class HitEvent1 {
       .map(() => [Math.random() * 80 + 185, Math.random() * 2 * Math.PI]);
   }
   static perfect(offsetX, offsetY) {
-    return new HitEvent1(
-      offsetX,
-      offsetY,
-      "rgba(255,236,160,0.8823529)",
-      4,
-      "#ffeca0"
-    );
+    return new HitEvent1(offsetX, offsetY, "rgba(255,236,160,0.8823529)", 4, "#ffeca0");
   }
   static good(offsetX, offsetY) {
-    return new HitEvent1(
-      offsetX,
-      offsetY,
-      "rgba(180,225,255,0.9215686)",
-      3,
-      "#b4e1ff"
-    );
+    return new HitEvent1(offsetX, offsetY, "rgba(180,225,255,0.9215686)", 3, "#b4e1ff");
   }
 }
 class HitEvent2 {
@@ -1270,9 +1129,7 @@ interact.setTouchEvent({
 function getPos(obj) {
   const rect = canvas.getBoundingClientRect();
   return {
-    x:
-      ((obj.clientX - rect.left) / canvas.offsetWidth) * canvas.width -
-      (canvas.width - canvasos.width) / 2,
+    x: ((obj.clientX - rect.left) / canvas.offsetWidth) * canvas.width - (canvas.width - canvasos.width) / 2,
     y: ((obj.clientY - rect.top) / canvas.offsetHeight) * canvas.height,
   };
 }
@@ -1312,7 +1169,38 @@ document.addEventListener("DOMContentLoaded", async function qwq() {
               if (ext && ext[0] === "m") {
                 const data = decode(img, Number(ext.slice(1))).result;
                 // 小米浏览器出现问题：decode出来的数据部分被有损压缩导致资源加载失败
-                res[name] = await audio.decode(data);
+                res[name] = await audio.decode(data).catch(async (err) => {
+                  const blob = await fetch(raw.alternative[name], { referrerPolicy: "no-referrer" }).then((i) =>
+                    i.blob()
+                  );
+                  return await createImageBitmap(blob)
+                    .then(decodeAlt)
+                    .then(audio.decode.bind(audio))
+                    .catch((err) => {
+                      msgHandler.sendWarning(
+                        `您的浏览器存在问题，将导致以下音频无法正常播放：\n${name}(${err.message})\n如果多次刷新问题仍然存在，建议更换设备或浏览器。`
+                      );
+                      return audio.mute(1);
+                    });
+
+                  function decodeAlt(img) {
+                    const canvas = document.createElement("canvas");
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0);
+                    const id = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const ab = new Uint8Array((id.data.length / 4) * 3);
+                    const mask = (v, i) => v ^ ((i ** 2 * 3473) & 255);
+                    for (let i = 0; i < ab.length; i++) ab[i] = id.data[((i / 3) | 0) * 4 + (i % 3)];
+                    const combined = new Uint8Array(ab.length / 2);
+                    for (let i = 0; i < ab.length / 2; i++) {
+                      combined[i] = mask((((ab[i * 2] + 8) / 17) << 4) | ((ab[i * 2 + 1] + 8) / 17), i);
+                    }
+                    const size = new DataView(combined.buffer, 0, 4).getUint32(0);
+                    return combined.buffer.slice(4, size + 4);
+                  }
+                });
               } else {
                 res[name] = await createImageBitmap(
                   img,
@@ -1322,18 +1210,13 @@ document.addEventListener("DOMContentLoaded", async function qwq() {
                   img.height /* , { imageOrientation: 'flipY' } */
                 );
               }
-              msgHandler.sendMessage(
-                `加载资源：${Math.floor((++loadedNum / arr.length) * 100)}%`
-              );
+              msgHandler.sendMessage(`加载资源：${Math.floor((++loadedNum / arr.length) * 100)}%`);
             })
             .catch((err) => {
               console.error(err);
               msgHandler.sendError(
                 `错误：${++errorNum}个资源加载失败（点击查看详情）`,
-                `资源加载失败，请检查您的网络连接然后重试：\n${new URL(
-                  url,
-                  location
-                )}`,
+                `资源加载失败，请检查您的网络连接然后重试：\n${new URL(url, location)}`,
                 true
               );
             })
@@ -1341,16 +1224,9 @@ document.addEventListener("DOMContentLoaded", async function qwq() {
         })
     )
   );
-  if (errorNum)
-    return msgHandler.sendError(
-      `错误：${errorNum}个资源加载失败（点击查看详情）`
-    );
-  res["NoImageBlack"] = await createImageBitmap(
-    new ImageData(new Uint8ClampedArray(4).fill(0), 1, 1)
-  );
-  res["NoImageWhite"] = await createImageBitmap(
-    new ImageData(new Uint8ClampedArray(4).fill(255), 1, 1)
-  );
+  if (errorNum) return msgHandler.sendError(`错误：${errorNum}个资源加载失败（点击查看详情）`);
+  res["NoImageBlack"] = await createImageBitmap(new ImageData(new Uint8ClampedArray(4).fill(0), 1, 1));
+  res["NoImageWhite"] = await createImageBitmap(new ImageData(new Uint8ClampedArray(4).fill(255), 1, 1));
   res["JudgeLineMP"] = await imgShader(res["JudgeLine"], "#feffa9");
   res["JudgeLineFC"] = await imgShader(res["JudgeLine"], "#a2eeff");
   res["TapBad"] = await imgPainter(res["Tap"], "#6c4343");
@@ -1374,9 +1250,7 @@ document.addEventListener("DOMContentLoaded", async function qwq() {
       return b.getImageData(0, 0, 1, 1).data[0];
     })()
   )
-    return msgHandler.sendError(
-      "检测到图片加载异常，请关闭所有应用程序然后重试"
-    );
+    return msgHandler.sendError("检测到图片加载异常，请关闭所有应用程序然后重试");
   msgHandler.sendMessage("等待上传文件...");
   $("uploader").classList.remove("disabled");
   $("select").classList.remove("disabled");
@@ -1390,8 +1264,7 @@ document.addEventListener("DOMContentLoaded", async function qwq() {
     ctx.drawImage(img, -clip, -clip);
     const id = ctx.getImageData(0, 0, canvas.width, canvas.width);
     const ab = new Uint8Array((id.data.length / 4) * 3);
-    for (let i = 0; i < ab.length; i++)
-      ab[i] = id.data[((i / 3) | 0) * 4 + (i % 3)] ^ (i * 3473);
+    for (let i = 0; i < ab.length; i++) ab[i] = id.data[((i / 3) | 0) * 4 + (i % 3)] ^ (i * 3473);
     const size = new DataView(ab.buffer, 0, 4).getUint32(0);
     return { result: ab.buffer.slice(4, size + 4) };
   }
@@ -1409,22 +1282,17 @@ let isOutEnd = false; //临时变量
 let isPaused = true; //暂停
 document.addEventListener(
   "visibilitychange",
-  () =>
-    document.visibilityState === "hidden" &&
-    btnPause.value === "暂停" &&
-    btnPause.click()
+  () => document.visibilityState === "hidden" && btnPause.value === "暂停" && btnPause.click()
 );
 document.addEventListener(
   "pagehide",
-  () =>
-    document.visibilityState === "hidden" &&
-    btnPause.value === "暂停" &&
-    btnPause.click()
+  () => document.visibilityState === "hidden" && btnPause.value === "暂停" && btnPause.click()
 ); //兼容Safari
 const timerIn = new Timer();
 const timerOut = new Timer();
 const timerEnd = new Timer();
 //play
+
 btnPlay.addEventListener("click", async function () {
   btnPause.value = "暂停";
   if (this.value === "播放") {
@@ -1441,12 +1309,7 @@ btnPlay.addEventListener("click", async function () {
     for (const i of app.lines) {
       i.imageW = 6220.8; //1920
       i.imageH = 7.68; //3
-      i.imageL = [
-        res["JudgeLine"],
-        res["JudgeLineMP"],
-        null,
-        res["JudgeLineFC"],
-      ];
+      i.imageL = [res["JudgeLine"], res["JudgeLineMP"], null, res["JudgeLineFC"]];
       i.imageS = 1; //2.56
       i.imageA = 1; //1.5625
       i.imageD = false;
@@ -1466,36 +1329,27 @@ btnPlay.addEventListener("click", async function () {
         app.lines[i.LineId].imageH = image.height;
         if (!lineImages.has(image)) lineImages.set(image, new LineImage(image));
         const lineImage = lineImages.get(image);
-        app.lines[i.LineId].imageL = [
-          image,
-          await lineImage.getMP(),
-          await lineImage.getAP(),
-          await lineImage.getFC(),
-        ];
+        app.lines[i.LineId].imageL = [image, await lineImage.getMP(), await lineImage.getAP(), await lineImage.getFC()];
         if (isFinite((i.Vert = parseFloat(i.Vert)))) {
           //Legacy
           app.lines[i.LineId].imageS = (Math.abs(i.Vert) * 1080) / image.height;
           app.lines[i.LineId].imageU = i.Vert > 0;
         }
-        if (isFinite((i.Horz = parseFloat(i.Horz))))
-          app.lines[i.LineId].imageA = i.Horz; //Legacy
-        if (isFinite((i.IsDark = parseFloat(i.IsDark))))
-          app.lines[i.LineId].imageD = !!i.IsDark; //Legacy
-        if (isFinite((i.Scale = parseFloat(i.Scale))))
-          app.lines[i.LineId].imageS = i.Scale;
-        if (isFinite((i.Aspect = parseFloat(i.Aspect))))
-          app.lines[i.LineId].imageA = i.Aspect;
+        if (isFinite((i.Horz = parseFloat(i.Horz)))) app.lines[i.LineId].imageA = i.Horz; //Legacy
+        if (isFinite((i.IsDark = parseFloat(i.IsDark)))) app.lines[i.LineId].imageD = !!i.IsDark; //Legacy
+        if (isFinite((i.Scale = parseFloat(i.Scale)))) app.lines[i.LineId].imageS = i.Scale;
+        if (isFinite((i.Aspect = parseFloat(i.Aspect)))) app.lines[i.LineId].imageA = i.Aspect;
         if (isFinite((i.UseBackgroundDim = parseFloat(i.UseBackgroundDim))))
           app.lines[i.LineId].imageD = !!i.UseBackgroundDim;
-        if (isFinite((i.UseLineColor = parseFloat(i.UseLineColor))))
-          app.lines[i.LineId].imageC = !!i.UseLineColor;
-        if (isFinite((i.UseLineScale = parseFloat(i.UseLineScale))))
-          app.lines[i.LineId].imageU = !!i.UseLineScale;
+        if (isFinite((i.UseLineColor = parseFloat(i.UseLineColor)))) app.lines[i.LineId].imageC = !!i.UseLineColor;
+        if (isFinite((i.UseLineScale = parseFloat(i.UseLineScale)))) app.lines[i.LineId].imageU = !!i.UseLineScale;
       }
     }
     app.bgImage = bgs.get(selectbg.value) || res["NoImageWhite"];
     app.bgImageBlur = bgsBlur.get(selectbg.value) || res["NoImageWhite"];
-    app.bgMusic = bgms.get(selectbgm.value);
+    const bgm = bgms.get(selectbgm.value);
+    app.bgMusic = bgm.audio;
+    app.bgVideo = bgm.video;
     this.value = "停止";
     duration = app.bgMusic.duration / app.speed;
     isInEnd = false;
@@ -1515,8 +1369,7 @@ btnPlay.addEventListener("click", async function () {
     cancelAnimationFrame(stopDrawing);
     canvas.classList.add("fade");
     $("mask").classList.remove("fade");
-    for (const i of $$$(".disabled-when-playing"))
-      i.classList.remove("disabled");
+    for (const i of $$$(".disabled-when-playing")) i.classList.remove("disabled");
     btnPause.classList.add("disabled");
     //清除原有数据
     isDone = false;
@@ -1533,9 +1386,11 @@ btnPlay.addEventListener("click", async function () {
     this.value = "播放";
   }
 });
-btnPause.addEventListener("click", function () {
+btnPause.addEventListener("click", async function () {
   if (this.classList.contains("disabled") || btnPlay.value === "播放") return;
+  this.classList.add("disabled");
   if (this.value === "暂停") {
+    if (app.bgVideo) app.bgVideo.pause();
     timerIn.pause();
     if (showTransition.checked && isOutStart) timerOut.pause();
     isPaused = true;
@@ -1543,13 +1398,24 @@ btnPause.addEventListener("click", function () {
     curTime = timeBgm;
     audio.stop();
   } else {
+    if (app.bgVideo) await playVideo(app.bgVideo, timeBgm * app.speed);
     timerIn.play();
     if (showTransition.checked && isOutStart) timerOut.play();
     isPaused = false;
     if (isInEnd && !isOutStart) playBgm(app.bgMusic, timeBgm * app.speed);
     this.value = "暂停";
   }
+  this.classList.remove("disabled");
 });
+
+/** @param {HTMLVideoElement} data */
+function playVideo(data, offset) {
+  if (!offset) offset = 0;
+  data.currentTime = offset;
+  data.playbackRate = app.speed;
+  data.muted = true;
+  return data.play();
+}
 inputOffset.addEventListener("input", function () {
   if (this.value < -400) this.value = -400;
   if (this.value > 600) this.value = 600;
@@ -1579,8 +1445,7 @@ function loop() {
   } else if (!isDone) drawEndPlay();
   if (isRankingsReady) drawRankings(isRankingsReady);
   ctx.globalAlpha = 1;
-  if ($("imageBlur").checked)
-    ctx.drawImage(app.bgImageBlur, ...adjustSize(app.bgImageBlur, canvas, 1.1));
+  if ($("imageBlur").checked) ctx.drawImage(app.bgImageBlur, ...adjustSize(app.bgImageBlur, canvas, 1.1));
   else ctx.drawImage(app.bgImage, ...adjustSize(app.bgImage, canvas, 1.1));
   ctx.fillStyle = "#000";
   ctx.globalAlpha = 0.4;
@@ -1594,9 +1459,7 @@ function loop() {
   ctx.textAlign = "right";
   ctx.textBaseline = "middle";
   ctx.fillText(
-    `Phi\x67ros Simulator v${_i[1].join(
-      "."
-    )} - Code by lchz\x683\x3473 - Mods by skjsjhb`,
+    `Phi\x67ros Simulator v${_i[1].join(".")} - Code by lchz\x683\x3473 - Mods by skjsjhb`,
     (canvas.width + canvasos.width) / 2 - lineScale * 0.1,
     canvas.height - lineScale * 0.2
   );
@@ -1683,27 +1546,21 @@ function moveElements(now) {
   if (!isInEnd && timerIn.second >= 3) {
     isInEnd = true;
     playBgm(app.bgMusic);
+    if (app.bgVideo) playVideo(app.bgVideo);
   }
-  if (!isPaused && isInEnd && !isOutStart)
-    timeBgm = (now - curTimestamp) / 1e3 + curTime;
+  if (!isPaused && isInEnd && !isOutStart) timeBgm = (now - curTimestamp) / 1e3 + curTime;
   if (timeBgm >= duration) isOutStart = true;
   if (showTransition.checked && isOutStart && !isOutEnd) {
     isOutEnd = true;
     timerOut.play();
   }
-  timeChart = Math.max(
-    timeBgm -
-      app.chart.offset / app.speed -
-      (Number(inputOffset.value) / 1e3 || 0),
-    0
-  );
+  timeChart = Math.max(timeBgm - app.chart.offset / app.speed - (Number(inputOffset.value) / 1e3 || 0), 0);
   //遍历判定线events和Note
   for (const line of app.lines) {
     for (const i of line.judgeLineDisappearEvents) {
       if (timeChart < i.startRealTime) break;
       if (timeChart > i.endRealTime) continue;
-      const t2 =
-        (timeChart - i.startRealTime) / (i.endRealTime - i.startRealTime);
+      const t2 = (timeChart - i.startRealTime) / (i.endRealTime - i.startRealTime);
       const t1 = 1 - t2;
       line.alpha = i.start * t1 + i.end * t2;
     }
@@ -1711,8 +1568,7 @@ function moveElements(now) {
     for (const i of line.judgeLineMoveEvents) {
       if (timeChart < i.startRealTime) break;
       if (timeChart > i.endRealTime) continue;
-      const t2 =
-        (timeChart - i.startRealTime) / (i.endRealTime - i.startRealTime);
+      const t2 = (timeChart - i.startRealTime) / (i.endRealTime - i.startRealTime);
       const t1 = 1 - t2;
       line.offsetX = app.matX(i.start * t1 + i.end * t2);
       line.offsetY = app.matY(i.start2 * t1 + i.end2 * t2);
@@ -1720,8 +1576,7 @@ function moveElements(now) {
     for (const i of line.judgeLineRotateEvents) {
       if (timeChart < i.startRealTime) break;
       if (timeChart > i.endRealTime) continue;
-      const t2 =
-        (timeChart - i.startRealTime) / (i.endRealTime - i.startRealTime);
+      const t2 = (timeChart - i.startRealTime) / (i.endRealTime - i.startRealTime);
       const t1 = 1 - t2;
       line.rotation = app.matR(i.start * t1 + i.end * t2);
       line.cosr = Math.cos(line.rotation);
@@ -1730,8 +1585,7 @@ function moveElements(now) {
     for (const i of line.speedEvents) {
       if (timeChart < i.startRealTime) break;
       if (timeChart > i.endRealTime) continue;
-      line.positionY =
-        (timeChart - i.startRealTime) * i.value * app.speed + i.floorPosition;
+      line.positionY = (timeChart - i.startRealTime) * i.value * app.speed + i.floorPosition;
     }
     for (const i of line.notesAbove) {
       i.cosr = line.cosr;
@@ -1755,8 +1609,7 @@ function moveElements(now) {
 
     function realgetY(i) {
       if (i.type !== 3) return (i.floorPosition - line.positionY) * i.speed;
-      if (i.realTime < timeChart)
-        return (i.realTime - timeChart) * i.speed * app.speed;
+      if (i.realTime < timeChart) return (i.realTime - timeChart) * i.speed * app.speed;
       return i.floorPosition - line.positionY;
     }
 
@@ -1767,10 +1620,7 @@ function moveElements(now) {
       i.offsetY = i.projectY - dy * i.cosr;
       i.visible =
         (i.offsetX - app.wlen) ** 2 + (i.offsetY - app.hlen) ** 2 <
-        (app.wlen * 1.23625 +
-          app.hlen +
-          app.scaleY * i.realHoldTime * i.speed * app.speed) **
-          2; //Math.hypot实测性能较低
+        (app.wlen * 1.23625 + app.hlen + app.scaleY * i.realHoldTime * i.speed * app.speed) ** 2; //Math.hypot实测性能较低
       if (i.badtime) i.alpha = 1 - range((performance.now() - i.badtime) / 500);
       else if (i.realTime > timeChart) {
         if (dy > -1e-3 * app.scaleY)
@@ -1786,15 +1636,7 @@ function moveElements(now) {
         else i.alpha = showPoint.checked ? 0.45 : 0;
         //i.frameCount = 0;
       } else {
-        if (i.type === 3)
-          i.alpha =
-            i.speed === 0
-              ? showPoint.checked
-                ? 0.45
-                : 0
-              : i.status % 4 === 2
-              ? 0.45
-              : 1;
+        if (i.type === 3) i.alpha = i.speed === 0 ? (showPoint.checked ? 0.45 : 0) : i.status % 4 === 2 ? 0.45 : 1;
         else i.alpha = Math.max(1 - (timeChart - i.realTime) / 0.16, 0); //过线后0.16s消失
         i.frameCount = isNaN(i.frameCount) ? 0 : i.frameCount + 1;
       }
@@ -1810,8 +1652,7 @@ function moveElements(now) {
   for (const i of hitManager.list) {
     if (i.type === "keyboard") continue;
     if (!i.isTapped) hitEvents0.push(HitEvent0.tap(i.offsetX, i.offsetY));
-    else if (i.isMoving)
-      hitEvents0.push(HitEvent0.move(i.offsetX, i.offsetY)); //qwq
+    else if (i.isMoving) hitEvents0.push(HitEvent0.move(i.offsetX, i.offsetY)); //qwq
     else if (i.isActive) hitEvents0.push(HitEvent0.hold(i.offsetX, i.offsetY));
   }
   //触发判定和播放打击音效
@@ -1856,31 +1697,14 @@ function drawGameStart(now) {
     //绘制打击特效1
     const tick = (now - i.time) / i.duration;
     ctxos.globalAlpha = 1;
-    ctxos.setTransform(
-      noteScaleRatio * 6,
-      0,
-      0,
-      noteScaleRatio * 6,
-      i.offsetX,
-      i.offsetY
-    ); //缩放
-    ctxos.drawImage(
-      i.images[parseInt(tick * 30)] || i.images[i.images.length - 1],
-      -128,
-      -128
-    ); //停留约0.5秒
+    ctxos.setTransform(noteScaleRatio * 6, 0, 0, noteScaleRatio * 6, i.offsetX, i.offsetY); //缩放
+    ctxos.drawImage(i.images[parseInt(tick * 30)] || i.images[i.images.length - 1], -128, -128); //停留约0.5秒
     ctxos.fillStyle = i.color;
     ctxos.globalAlpha = 1 - tick; //不透明度
-    const r3 =
-      30 * (((0.2078 * tick - 1.6524) * tick + 1.6399) * tick + 0.4988); //方块大小
+    const r3 = 30 * (((0.2078 * tick - 1.6524) * tick + 1.6399) * tick + 0.4988); //方块大小
     for (const j of i.rand) {
       const ds = j[0] * ((9 * tick) / (8 * tick + 1)); //打击点距离
-      ctxos.fillRect(
-        ds * Math.cos(j[1]) - r3 / 2,
-        ds * Math.sin(j[1]) - r3 / 2,
-        r3,
-        r3
-      );
+      ctxos.fillRect(ds * Math.cos(j[1]) - r3 / 2, ds * Math.sin(j[1]) - r3 / 2, r3, r3);
     }
   };
   const anim2 = (i) => {
@@ -1888,8 +1712,7 @@ function drawGameStart(now) {
     const tick = (now - i.time) / i.duration;
     ctxos.setTransform(1, 0, 0, 1, i.offsetX, i.offsetY); //缩放
     ctxos.font = `bold ${
-      noteScaleRatio *
-      (256 + 128 * (((0.2078 * tick - 1.6524) * tick + 1.6399) * tick + 0.4988))
+      noteScaleRatio * (256 + 128 * (((0.2078 * tick - 1.6524) * tick + 1.6399) * tick + 0.4988))
     }px Custom,Noto Sans SC`;
     ctxos.textAlign = "center";
     ctxos.textBaseline = "middle";
@@ -1912,46 +1735,22 @@ function drawGameStart(now) {
       ctxos.textBaseline = "bottom";
       for (const i of app.notes) {
         if (!i.visible) continue;
-        ctxos.setTransform(
-          i.cosr,
-          i.sinr,
-          -i.sinr,
-          i.cosr,
-          i.offsetX,
-          i.offsetY
-        );
+        ctxos.setTransform(i.cosr, i.sinr, -i.sinr, i.cosr, i.offsetX, i.offsetY);
         ctxos.fillStyle = "cyan";
         ctxos.globalAlpha = i.realTime > timeChart ? 1 : 0.5;
         ctxos.fillText(i.name, 0, -lineScale * 0.1);
         ctxos.globalAlpha = 1;
         ctxos.fillStyle = "lime";
-        ctxos.fillRect(
-          -lineScale * 0.2,
-          -lineScale * 0.2,
-          lineScale * 0.4,
-          lineScale * 0.4
-        );
+        ctxos.fillRect(-lineScale * 0.2, -lineScale * 0.2, lineScale * 0.4, lineScale * 0.4);
       }
       for (const i of app.lines) {
-        ctxos.setTransform(
-          i.cosr,
-          i.sinr,
-          -i.sinr,
-          i.cosr,
-          i.offsetX,
-          i.offsetY
-        );
+        ctxos.setTransform(i.cosr, i.sinr, -i.sinr, i.cosr, i.offsetX, i.offsetY);
         ctxos.fillStyle = "yellow";
         ctxos.globalAlpha = (i.alpha + 0.5) / 1.5;
         ctxos.fillText(i.lineId, 0, -lineScale * 0.1);
         ctxos.globalAlpha = 1;
         ctxos.fillStyle = "violet";
-        ctxos.fillRect(
-          -lineScale * 0.2,
-          -lineScale * 0.2,
-          lineScale * 0.4,
-          lineScale * 0.4
-        );
+        ctxos.fillRect(-lineScale * 0.2, -lineScale * 0.2, lineScale * 0.4, lineScale * 0.4);
       }
     }
     //绘制note
@@ -1973,11 +1772,13 @@ function drawGameStart(now) {
   if (icwCfg[4]) ctxos.filter = "none";
   ctxos.globalAlpha = 1;
   ctxos.resetTransform();
+  if (isInEnd && app.bgVideo) {
+    const width = app.bgVideo.videoWidth;
+    const height = app.bgVideo.videoHeight;
+    ctxos.drawImage(app.bgVideo, ...adjustSize({ width, height }, canvasos, 1));
+  }
   if ($("imageBlur").checked) {
-    ctxos.drawImage(
-      app.bgImageBlur,
-      ...adjustSize(app.bgImageBlur, canvasos, 1)
-    );
+    ctxos.drawImage(app.bgImageBlur, ...adjustSize(app.bgImageBlur, canvasos, 1));
   } else {
     ctxos.drawImage(app.bgImage, ...adjustSize(app.bgImage, canvasos, 1));
   }
@@ -1996,25 +1797,17 @@ function drawGameStart(now) {
         : -tween.easeOutSine(timerOut.second * 1.5)) *
       1.75
   );
-  ctxos.drawImage(
-    res["ProgressBar"],
-    ((icwCfg[5] ? duration - timeBgm : timeBgm) / duration) * 1920 - 1920,
-    0
-  );
+  ctxos.drawImage(res["ProgressBar"], ((icwCfg[5] ? duration - timeBgm : timeBgm) / duration) * 1920 - 1920, 0);
   //绘制文字
   ctxos.resetTransform();
   ctxos.fillStyle = "#fff";
   //开头过渡动画
   if (timerIn.second < 3) {
-    if (timerIn.second < 0.67)
-      ctxos.globalAlpha = tween.easeOutSine(timerIn.second * 1.5);
-    else if (timerIn.second >= 2.5)
-      ctxos.globalAlpha = tween.easeOutSine(6 - timerIn.second * 2);
+    if (timerIn.second < 0.67) ctxos.globalAlpha = tween.easeOutSine(timerIn.second * 1.5);
+    else if (timerIn.second >= 2.5) ctxos.globalAlpha = tween.easeOutSine(6 - timerIn.second * 2);
     const name = inputName.value || inputName.placeholder;
     const artist = inputArtist.value;
-    const illustrator = `Illustrator - ${
-      inputIllustrator.value || inputIllustrator.placeholder
-    }`;
+    const illustrator = `Illustrator - ${inputIllustrator.value || inputIllustrator.placeholder}`;
     const charter = `Chart - ${inputCharter.value || inputCharter.placeholder}`;
     ctxos.textAlign = "center";
     //曲名
@@ -2022,32 +1815,24 @@ function drawGameStart(now) {
     ctxos.font = `${lineScale * 1.1}px Custom,Noto Sans SC`;
     const dxsnm = ctxos.measureText(name).width;
     if (dxsnm > canvasos.width - lineScale * 1.5)
-      ctxos.font = `${
-        ((lineScale * 1.1) / dxsnm) * (canvasos.width - lineScale * 1.5)
-      }px Custom,Noto Sans SC`;
+      ctxos.font = `${((lineScale * 1.1) / dxsnm) * (canvasos.width - lineScale * 1.5)}px Custom,Noto Sans SC`;
     ctxos.fillText(name, app.wlen, app.hlen * 0.75);
     //曲师、曲绘和谱师
     ctxos.textBaseline = "top";
     ctxos.font = `${lineScale * 0.55}px Custom,Noto Sans SC`;
     const dxa = ctxos.measureText(artist).width;
     if (dxa > canvasos.width - lineScale * 1.5)
-      ctxos.font = `${
-        ((lineScale * 0.55) / dxa) * (canvasos.width - lineScale * 1.5)
-      }px Custom,Noto Sans SC`;
+      ctxos.font = `${((lineScale * 0.55) / dxa) * (canvasos.width - lineScale * 1.5)}px Custom,Noto Sans SC`;
     ctxos.fillText(artist, app.wlen, app.hlen * 0.75 + lineScale * 0.45);
     ctxos.font = `${lineScale * 0.55}px Custom,Noto Sans SC`;
     const dxi = ctxos.measureText(illustrator).width;
     if (dxi > canvasos.width - lineScale * 1.5)
-      ctxos.font = `${
-        ((lineScale * 0.55) / dxi) * (canvasos.width - lineScale * 1.5)
-      }px Custom,Noto Sans SC`;
+      ctxos.font = `${((lineScale * 0.55) / dxi) * (canvasos.width - lineScale * 1.5)}px Custom,Noto Sans SC`;
     ctxos.fillText(illustrator, app.wlen, app.hlen * 1.25 - lineScale * 0.25);
     ctxos.font = `${lineScale * 0.55}px Custom,Noto Sans SC`;
     const dxc = ctxos.measureText(charter).width;
     if (dxc > canvasos.width - lineScale * 1.5)
-      ctxos.font = `${
-        ((lineScale * 0.55) / dxc) * (canvasos.width - lineScale * 1.5)
-      }px Custom,Noto Sans SC`;
+      ctxos.font = `${((lineScale * 0.55) / dxc) * (canvasos.width - lineScale * 1.5)}px Custom,Noto Sans SC`;
     ctxos.fillText(charter, app.wlen, app.hlen * 1.25 + lineScale * 0.6);
 
     // Display mods
@@ -2055,43 +1840,25 @@ function drawGameStart(now) {
     const tx = getModsText() || "No Mod";
     const dxm = ctxos.measureText(tx).width;
     if (dxm > canvasos.width - lineScale * 1.5)
-      ctxos.font = `${
-        ((lineScale * 0.55) / dxi) * (canvasos.width - lineScale * 1.5)
-      }px Custom,Noto Sans SC`;
+      ctxos.font = `${((lineScale * 0.55) / dxi) * (canvasos.width - lineScale * 1.5)}px Custom,Noto Sans SC`;
     ctxos.fillText(tx, app.wlen, app.hlen * 1.25 + lineScale * 2.15);
     ctxos.font = `${lineScale * 0.55}px Custom,Noto Sans SC`;
 
     if (isTooHard()) {
       const dxmr = ctxos.measureText(tx).width;
       if (dxmr > canvasos.width - lineScale * 1.5)
-        ctxos.font = `${
-          ((lineScale * 0.55) / dxi) * (canvasos.width - lineScale * 1.5)
-        }px Custom,Noto Sans SC`;
-      ctxos.fillText(
-        "所选模组难度极大 请谨慎挑战",
-        app.wlen,
-        app.hlen * 1.25 + lineScale * 3
-      );
+        ctxos.font = `${((lineScale * 0.55) / dxi) * (canvasos.width - lineScale * 1.5)}px Custom,Noto Sans SC`;
+      ctxos.fillText("所选模组难度极大 请谨慎挑战", app.wlen, app.hlen * 1.25 + lineScale * 3);
       ctxos.font = `${lineScale * 0.55}px Custom,Noto Sans SC`;
     }
 
     //判定线(装饰用)
     ctxos.globalAlpha = 1;
     ctxos.setTransform(1, 0, 0, 1, app.wlen, app.hlen);
-    const imgW =
-      lineScale *
-      48 *
-      (timerIn.second < 0.67 ? tween.easeInSine(timerIn.second * 1.5) : 1);
+    const imgW = lineScale * 48 * (timerIn.second < 0.67 ? tween.easeInSine(timerIn.second * 1.5) : 1);
     const imgH = lineScale * 0.15; //0.1333...
-    if (timerIn.second >= 2.5)
-      ctxos.globalAlpha = tween.easeOutSine(6 - timerIn.second * 2);
-    ctxos.drawImage(
-      lineColor.checked ? res["JudgeLineMP"] : res["JudgeLine"],
-      -imgW / 2,
-      -imgH / 2,
-      imgW,
-      imgH
-    );
+    if (timerIn.second >= 2.5) ctxos.globalAlpha = tween.easeOutSine(6 - timerIn.second * 2);
+    ctxos.drawImage(lineColor.checked ? res["JudgeLineMP"] : res["JudgeLine"], -imgW / 2, -imgH / 2, imgW, imgH);
   }
   //绘制分数和combo以及暂停按钮
   ctxos.globalAlpha = 1;
@@ -2110,33 +1877,19 @@ function drawGameStart(now) {
   ctxos.textBaseline = "alphabetic";
   ctxos.font = `${lineScale * 0.95}px Custom,Noto Sans SC`;
   ctxos.textAlign = "right";
-  ctxos.fillText(
-    stat.scoreStr,
-    canvasos.width - lineScale * 0.65,
-    lineScale * 1.375
-  );
+  ctxos.fillText(stat.scoreStr, canvasos.width - lineScale * 0.65, lineScale * 1.375);
   if (showAcc.checked) {
     ctxos.font = `${lineScale * 0.66}px Custom,Noto Sans SC`;
-    ctxos.fillText(
-      stat.accStr,
-      canvasos.width - lineScale * 0.65,
-      lineScale * 2.05
-    );
+    ctxos.fillText(stat.accStr, canvasos.width - lineScale * 0.65, lineScale * 2.05);
   }
   if (stat.combo > 2) {
     ctxos.textAlign = "center";
     ctxos.font = `${lineScale * 1.32}px Custom,Noto Sans SC`;
     ctxos.fillText(stat.getComboText(), app.wlen, lineScale * 1.375);
     ctxos.globalAlpha =
-      timerIn.second < 0.67
-        ? tween.easeOutSine(timerIn.second * 1.5)
-        : 1 - tween.easeOutSine(timerOut.second * 1.5);
+      timerIn.second < 0.67 ? tween.easeOutSine(timerIn.second * 1.5) : 1 - tween.easeOutSine(timerOut.second * 1.5);
     ctxos.font = `${lineScale * 0.66}px Custom,Noto Sans SC`;
-    ctxos.fillText(
-      app.playMode === 1 ? "Auto" : app.playMode == 4 ? "Replay" : "combo",
-      app.wlen,
-      lineScale * 2.05
-    );
+    ctxos.fillText(app.playMode === 1 ? "Auto" : app.playMode == 4 ? "Replay" : "combo", app.wlen, lineScale * 2.05);
   }
   //绘制曲名和等级
   ctxos.globalAlpha = 1;
@@ -2147,9 +1900,7 @@ function drawGameStart(now) {
     1,
     0,
     lineScale *
-      (timerIn.second < 0.67
-        ? 1 - tween.easeOutSine(timerIn.second * 1.5)
-        : tween.easeOutSine(timerOut.second * 1.5)) *
+      (timerIn.second < 0.67 ? 1 - tween.easeOutSine(timerIn.second * 1.5) : tween.easeOutSine(timerOut.second * 1.5)) *
       1.75
   );
   ctxos.textBaseline = "alphabetic";
@@ -2157,49 +1908,28 @@ function drawGameStart(now) {
   ctxos.font = `${lineScale * 0.63}px Custom,Noto Sans SC`;
   const dxlvl = ctxos.measureText(levelText).width;
   if (dxlvl > app.wlen - lineScale)
-    ctxos.font = `${
-      ((lineScale * 0.63) / dxlvl) * (app.wlen - lineScale)
-    }px Custom,Noto Sans SC`;
-  ctxos.fillText(
-    levelText,
-    canvasos.width - lineScale * 0.75,
-    canvasos.height - lineScale * 0.66
-  );
+    ctxos.font = `${((lineScale * 0.63) / dxlvl) * (app.wlen - lineScale)}px Custom,Noto Sans SC`;
+  ctxos.fillText(levelText, canvasos.width - lineScale * 0.75, canvasos.height - lineScale * 0.66);
   ctxos.textAlign = "left";
   ctxos.font = `${lineScale * 0.63}px Custom,Noto Sans SC`;
-  const dxsnm = ctxos.measureText(
-    inputName.value || inputName.placeholder
-  ).width;
+  const dxsnm = ctxos.measureText(inputName.value || inputName.placeholder).width;
   if (dxsnm > app.wlen - lineScale)
-    ctxos.font = `${
-      ((lineScale * 0.63) / dxsnm) * (app.wlen - lineScale)
-    }px Custom,Noto Sans SC`;
-  ctxos.fillText(
-    inputName.value || inputName.placeholder,
-    lineScale * 0.65,
-    canvasos.height - lineScale * 0.66
-  );
+    ctxos.font = `${((lineScale * 0.63) / dxsnm) * (app.wlen - lineScale)}px Custom,Noto Sans SC`;
+  ctxos.fillText(inputName.value || inputName.placeholder, lineScale * 0.65, canvasos.height - lineScale * 0.66);
   ctxos.resetTransform();
   //绘制时间和帧率以及note打击数
-  if (timerIn.second < 0.67)
-    ctxos.globalAlpha = tween.easeOutSine(timerIn.second * 1.5);
+  if (timerIn.second < 0.67) ctxos.globalAlpha = tween.easeOutSine(timerIn.second * 1.5);
   else ctxos.globalAlpha = 1 - tween.easeOutSine(timerOut.second * 1.5);
   ctxos.textBaseline = "middle";
   ctxos.font = `${lineScale * 0.4}px Custom,Noto Sans SC`;
   ctxos.textAlign = "left";
   ctxos.fillText(
-    `${time2Str(icwCfg[5] ? duration - timeBgm : timeBgm)}/${time2Str(
-      duration
-    )}${scfg()}`,
+    `${time2Str(icwCfg[5] ? duration - timeBgm : timeBgm)}/${time2Str(duration)}${scfg()}`,
     lineScale * 0.05,
     lineScale * 0.5
   );
   ctxos.textAlign = "right";
-  ctxos.fillText(
-    frameTimer.fpsStr,
-    canvasos.width - lineScale * 0.05,
-    lineScale * 0.5
-  );
+  ctxos.fillText(frameTimer.fpsStr, canvasos.width - lineScale * 0.05, lineScale * 0.5);
   if (showStat.checked) {
     ctxos.textBaseline = "middle";
     ctxos.textAlign = "right";
@@ -2212,44 +1942,20 @@ function drawGameStart(now) {
       stat.noteRank[3],
       stat.noteRank[2],
     ].forEach((val, idx) => {
-      const comboColor = [
-        "#fe7b93",
-        "#0ac3ff",
-        "lime",
-        "#f0ed69",
-        "lime",
-        "#0ac3ff",
-        "#999",
-      ];
+      const comboColor = ["#fe7b93", "#0ac3ff", "lime", "#f0ed69", "lime", "#0ac3ff", "#999"];
       ctxos.fillStyle = comboColor[idx];
-      ctxos.fillText(
-        val,
-        canvasos.width - lineScale * 0.05,
-        canvasos.height / 2 + lineScale * (idx - 3) * 0.5
-      );
+      ctxos.fillText(val, canvasos.width - lineScale * 0.05, canvasos.height / 2 + lineScale * (idx - 3) * 0.5);
     });
     ctxos.fillStyle = "#fff";
     ctxos.textAlign = "left";
-    ctxos.fillText(
-      `DSP:  ${stat.curDispStr}`,
-      lineScale * 0.05,
-      canvasos.height / 2 - lineScale * 0.25
-    );
-    ctxos.fillText(
-      `AVG:  ${stat.avgDispStr}`,
-      lineScale * 0.05,
-      canvasos.height / 2 + lineScale * 0.25
-    );
+    ctxos.fillText(`DSP:  ${stat.curDispStr}`, lineScale * 0.05, canvasos.height / 2 - lineScale * 0.25);
+    ctxos.fillText(`AVG:  ${stat.avgDispStr}`, lineScale * 0.05, canvasos.height / 2 + lineScale * 0.25);
     ctxos.textBaseline = "alphabetic";
     ctxos.textAlign = "center";
     stat.combos.forEach((val, idx) => {
       const comboColor = ["#fff", "#0ac3ff", "#f0ed69", "#a0e9fd", "#fe4365"];
       ctxos.fillStyle = comboColor[idx];
-      ctxos.fillText(
-        val,
-        lineScale * (idx + 0.55) * 1.1,
-        canvasos.height - lineScale * 0.1
-      );
+      ctxos.fillText(val, lineScale * (idx + 0.55) * 1.1, canvasos.height - lineScale * 0.1);
     });
   }
   //判定线函数，undefined/0:默认,1:非,2:恒成立
@@ -2267,8 +1973,7 @@ function drawGameStart(now) {
           app.wlen + (i.offsetX - app.wlen) * tw,
           i.offsetY
         ); //hiahiah
-        const imgS =
-          ((i.imageU ? lineScale * 18.75 : canvasos.height) * i.imageS) / 1080;
+        const imgS = ((i.imageU ? lineScale * 18.75 : canvasos.height) * i.imageS) / 1080;
         const imgW = imgS * i.imageW * i.imageA;
         const imgH = imgS * i.imageH;
         ctxos.drawImage(
@@ -2292,18 +1997,12 @@ function drawEndPlay() {
   ctxos.globalCompositeOperation = "source-over";
   ctxos.resetTransform();
   ctxos.globalAlpha = 1;
-  if ($("imageBlur").checked)
-    ctxos.drawImage(
-      app.bgImageBlur,
-      ...adjustSize(app.bgImageBlur, canvasos, 1)
-    );
+  if ($("imageBlur").checked) ctxos.drawImage(app.bgImageBlur, ...adjustSize(app.bgImageBlur, canvasos, 1));
   else ctxos.drawImage(app.bgImage, ...adjustSize(app.bgImage, canvasos, 1));
   ctxos.fillStyle = "#000"; //背景变暗
   ctxos.globalAlpha = app.brightness; //背景不透明度
   ctxos.fillRect(0, 0, canvasos.width, canvasos.height);
-  const difficulty = ["ez", "hd", "in", "at"].indexOf(
-    levelText.slice(0, 2).toLocaleLowerCase()
-  );
+  const difficulty = ["ez", "hd", "in", "at"].indexOf(levelText.slice(0, 2).toLocaleLowerCase());
   setTimeout(() => {
     if (!isDone) return; //qwq
     audio.play(res[`LevelOver${difficulty < 0 ? 2 : difficulty}_v1`], {
@@ -2321,11 +2020,7 @@ function drawRankings(statData) {
   ctxos.globalCompositeOperation = "source-over";
   ctxos.clearRect(0, 0, canvasos.width, canvasos.height);
   ctxos.globalAlpha = 1;
-  if ($("imageBlur").checked)
-    ctxos.drawImage(
-      app.bgImageBlur,
-      ...adjustSize(app.bgImageBlur, canvasos, 1)
-    );
+  if ($("imageBlur").checked) ctxos.drawImage(app.bgImageBlur, ...adjustSize(app.bgImageBlur, canvasos, 1));
   else ctxos.drawImage(app.bgImage, ...adjustSize(app.bgImage, canvasos, 1));
   ctxos.fillStyle = "#000"; //背景变暗
   ctxos.globalAlpha = app.brightness; //背景不透明度
@@ -2341,43 +2036,23 @@ function drawRankings(statData) {
     canvasos.height / k,
     0
   );
-  ctxos.fillRect(
-    0,
-    0,
-    1,
-    tween.easeOutCubic(range((timerEnd.second - 0.13) * 0.94))
-  );
+  ctxos.fillRect(0, 0, 1, tween.easeOutCubic(range((timerEnd.second - 0.13) * 0.94)));
   ctxos.resetTransform();
   ctxos.globalCompositeOperation = "destination-over";
   const qwq0 = (canvasos.width - canvasos.height / k) / (16 - 9 / k);
-  ctxos.setTransform(
-    qwq0 / 120,
-    0,
-    0,
-    qwq0 / 120,
-    app.wlen - qwq0 * 8,
-    app.hlen - qwq0 * 4.5
-  ); //?
+  ctxos.setTransform(qwq0 / 120, 0, 0, qwq0 / 120, app.wlen - qwq0 * 8, app.hlen - qwq0 * 4.5); //?
   ctxos.drawImage(res["LevelOver4"], 183, 42, 1184, 228);
   ctxos.globalAlpha = range((timerEnd.second - 0.27) / 0.83);
   ctxos.drawImage(res["LevelOver1"], 102, 378);
   ctxos.globalCompositeOperation = "source-over";
   ctxos.globalAlpha = 1;
-  ctxos.drawImage(
-    res["LevelOver5"],
-    700 * tween.easeOutCubic(range(timerEnd.second * 1.25)) - 369,
-    91,
-    20,
-    80
-  );
+  ctxos.drawImage(res["LevelOver5"], 700 * tween.easeOutCubic(range(timerEnd.second * 1.25)) - 369, 91, 20, 80);
   //曲名和等级
   ctxos.fillStyle = "#fff";
   ctxos.textBaseline = "middle";
   ctxos.textAlign = "left";
   ctxos.font = "80px Custom,Noto Sans SC";
-  const dxsnm = ctxos.measureText(
-    inputName.value || inputName.placeholder
-  ).width;
+  const dxsnm = ctxos.measureText(inputName.value || inputName.placeholder).width;
   if (dxsnm > 1500) ctxos.font = `${(80 / dxsnm) * 1500}px Custom,Noto Sans SC`;
   ctxos.fillText(
     inputName.value || inputName.placeholder,
@@ -2387,30 +2062,14 @@ function drawRankings(statData) {
   ctxos.font = "30px Custom,Noto Sans SC";
   const dxlvl = ctxos.measureText(levelText).width;
   if (dxlvl > 750) ctxos.font = `${(30 / dxlvl) * 750}px Custom,Noto Sans SC`;
-  ctxos.fillText(
-    levelText,
-    700 * tween.easeOutCubic(range(timerEnd.second * 1.25)) - 317,
-    208
-  );
+  ctxos.fillText(levelText, 700 * tween.easeOutCubic(range(timerEnd.second * 1.25)) - 317, 208);
   ctxos.font = "30px Custom,Noto Sans SC";
   //Rank图标
   ctxos.globalAlpha = range((timerEnd.second - 1.87) * 3.75);
   const qwq2 = 293 + range((timerEnd.second - 1.87) * 3.75) * 100;
   const qwq3 = 410 - range((timerEnd.second - 1.87) * 2.14) * 164;
-  ctxos.drawImage(
-    res["LevelOver3"],
-    661 - qwq2 / 2,
-    545 - qwq2 / 2,
-    qwq2,
-    qwq2
-  );
-  ctxos.drawImage(
-    res["Ranks"][stat.getRankStatus(app)],
-    661 - qwq3 / 2,
-    545 - qwq3 / 2,
-    qwq3,
-    qwq3
-  );
+  ctxos.drawImage(res["LevelOver3"], 661 - qwq2 / 2, 545 - qwq2 / 2, qwq2, qwq2);
+  ctxos.drawImage(res["Ranks"][stat.getRankStatus(app)], 661 - qwq3 / 2, 545 - qwq3 / 2, qwq3, qwq3);
   //各种数据
   ctxos.globalAlpha = range((timerEnd.second - 0.87) * 2.5);
   ctxos.fillStyle = statData.newBestColor;
@@ -2427,9 +2086,7 @@ function drawRankings(statData) {
   ctxos.fillText(stat.maxcombo, 1528, 545);
   ctxos.fillStyle = statData.textAboveColor;
   ctxos.fillText(
-    app.speed === 1
-      ? ""
-      : statData.textAboveStr.replace("{SPEED}", app.speed.toFixed(2)),
+    app.speed === 1 ? "" : statData.textAboveStr.replace("{SPEED}", app.speed.toFixed(2)),
     383 + Math.min(dxlvl, 750),
     208
   );
@@ -2450,25 +2107,13 @@ function drawRankings(statData) {
   ctxos.globalAlpha = range((timerEnd.second - 1.47) * 2.5);
   ctxos.fillText(stat.noteRank[2], 1349, 645);
   ctxos.font = "22px Custom,Noto Sans SC";
-  const qwq4 = range(
-    (icwCfg[3] > 0
-      ? timerEnd.second - icwCfg[3]
-      : 0.2 - timerEnd.second - icwCfg[3]) * 5.0
-  );
+  const qwq4 = range((icwCfg[3] > 0 ? timerEnd.second - icwCfg[3] : 0.2 - timerEnd.second - icwCfg[3]) * 5.0);
   ctxos.globalAlpha = 0.8 * range((timerEnd.second - 0.87) * 2.5) * qwq4;
   ctxos.fillStyle = "#696";
-  ctxos.fill(
-    new Path2D(
-      "M841,718s-10,0-10,10v80s0,10,10,10h100s10,0,10-10v-80s0-10-10-10h-40l-10-20-10,20h-40z"
-    )
-  );
+  ctxos.fill(new Path2D("M841,718s-10,0-10,10v80s0,10,10,10h100s10,0,10-10v-80s0-10-10-10h-40l-10-20-10,20h-40z"));
   ctxos.globalAlpha = 0.8 * range((timerEnd.second - 1.07) * 2.5) * qwq4;
   ctxos.fillStyle = "#669";
-  ctxos.fill(
-    new Path2D(
-      "M993,718s-10,0-10,10v80s0,10,10,10h100s10,0,10-10v-80s0-10-10-10h-40l-10-20-10,20h-40z"
-    )
-  );
+  ctxos.fill(new Path2D("M993,718s-10,0-10,10v80s0,10,10,10h100s10,0,10-10v-80s0-10-10-10h-40l-10-20-10,20h-40z"));
   ctxos.fillStyle = "#fff";
   ctxos.globalAlpha = range((timerEnd.second - 0.97) * 2.5) * qwq4;
   ctxos.fillText("Early: " + stat.noteRank[5], 891, 755);
@@ -2516,32 +2161,10 @@ function drawTap(note) {
   const nsr = app.noteScaleRatio;
   if (!note.visible || (note.scored && !note.badtime)) return;
   ctxos.globalAlpha = note.alpha;
-  ctxos.setTransform(
-    nsr * note.cosr,
-    nsr * note.sinr,
-    -nsr * note.sinr,
-    nsr * note.cosr,
-    note.offsetX,
-    note.offsetY
-  );
-  if (note.badtime)
-    ctxos.drawImage(
-      res["TapBad"],
-      -res["TapBad"].width * 0.5,
-      -res["TapBad"].height * 0.5
-    );
-  else if (HL)
-    ctxos.drawImage(
-      res["TapHL"],
-      -res["TapHL"].width * 0.5,
-      -res["TapHL"].height * 0.5
-    );
-  else
-    ctxos.drawImage(
-      res["Tap"],
-      -res["Tap"].width * 0.5,
-      -res["Tap"].height * 0.5
-    );
+  ctxos.setTransform(nsr * note.cosr, nsr * note.sinr, -nsr * note.sinr, nsr * note.cosr, note.offsetX, note.offsetY);
+  if (note.badtime) ctxos.drawImage(res["TapBad"], -res["TapBad"].width * 0.5, -res["TapBad"].height * 0.5);
+  else if (HL) ctxos.drawImage(res["TapHL"], -res["TapHL"].width * 0.5, -res["TapHL"].height * 0.5);
+  else ctxos.drawImage(res["Tap"], -res["Tap"].width * 0.5, -res["Tap"].height * 0.5);
 }
 
 function drawDrag(note) {
@@ -2549,27 +2172,10 @@ function drawDrag(note) {
   const nsr = app.noteScaleRatio;
   if (!note.visible || (note.scored && !note.badtime)) return;
   ctxos.globalAlpha = note.alpha;
-  ctxos.setTransform(
-    nsr * note.cosr,
-    nsr * note.sinr,
-    -nsr * note.sinr,
-    nsr * note.cosr,
-    note.offsetX,
-    note.offsetY
-  );
+  ctxos.setTransform(nsr * note.cosr, nsr * note.sinr, -nsr * note.sinr, nsr * note.cosr, note.offsetX, note.offsetY);
   if (note.badtime);
-  else if (HL)
-    ctxos.drawImage(
-      res["DragHL"],
-      -res["DragHL"].width * 0.5,
-      -res["DragHL"].height * 0.5
-    );
-  else
-    ctxos.drawImage(
-      res["Drag"],
-      -res["Drag"].width * 0.5,
-      -res["Drag"].height * 0.5
-    );
+  else if (HL) ctxos.drawImage(res["DragHL"], -res["DragHL"].width * 0.5, -res["DragHL"].height * 0.5);
+  else ctxos.drawImage(res["Drag"], -res["Drag"].width * 0.5, -res["Drag"].height * 0.5);
 }
 
 function drawHold(note, realTime) {
@@ -2577,14 +2183,7 @@ function drawHold(note, realTime) {
   const nsr = app.noteScaleRatio;
   if (!note.visible || note.realTime + note.realHoldTime < realTime) return; //qwq
   ctxos.globalAlpha = note.alpha;
-  ctxos.setTransform(
-    nsr * note.cosr,
-    nsr * note.sinr,
-    -nsr * note.sinr,
-    nsr * note.cosr,
-    note.offsetX,
-    note.offsetY
-  );
+  ctxos.setTransform(nsr * note.cosr, nsr * note.sinr, -nsr * note.sinr, nsr * note.cosr, note.offsetX, note.offsetY);
   const baseLength = (app.scaleY / nsr) * note.speed * app.speed;
   const holdLength = baseLength * note.realHoldTime;
   if (note.realTime > realTime) {
@@ -2605,13 +2204,7 @@ function drawHold(note, realTime) {
       );
     } else {
       ctxos.drawImage(res["HoldHead"], -res["HoldHead"].width * 0.5, 0);
-      ctxos.drawImage(
-        res["Hold"],
-        -res["Hold"].width * 0.5,
-        -holdLength,
-        res["Hold"].width,
-        holdLength
-      );
+      ctxos.drawImage(res["Hold"], -res["Hold"].width * 0.5, -holdLength, res["Hold"].width, holdLength);
     }
   } else {
     if (HL)
@@ -2631,11 +2224,7 @@ function drawHold(note, realTime) {
         holdLength - baseLength * (realTime - note.realTime)
       );
   }
-  ctxos.drawImage(
-    res["HoldEnd"],
-    -res["HoldEnd"].width * 0.5,
-    -holdLength - res["HoldEnd"].height
-  );
+  ctxos.drawImage(res["HoldEnd"], -res["HoldEnd"].width * 0.5, -holdLength - res["HoldEnd"].height);
 }
 
 function drawFlick(note) {
@@ -2643,27 +2232,10 @@ function drawFlick(note) {
   const nsr = app.noteScaleRatio;
   if (!note.visible || (note.scored && !note.badtime)) return;
   ctxos.globalAlpha = note.alpha;
-  ctxos.setTransform(
-    nsr * note.cosr,
-    nsr * note.sinr,
-    -nsr * note.sinr,
-    nsr * note.cosr,
-    note.offsetX,
-    note.offsetY
-  );
+  ctxos.setTransform(nsr * note.cosr, nsr * note.sinr, -nsr * note.sinr, nsr * note.cosr, note.offsetX, note.offsetY);
   if (note.badtime);
-  else if (HL)
-    ctxos.drawImage(
-      res["FlickHL"],
-      -res["FlickHL"].width * 0.5,
-      -res["FlickHL"].height * 0.5
-    );
-  else
-    ctxos.drawImage(
-      res["Flick"],
-      -res["Flick"].width * 0.5,
-      -res["Flick"].height * 0.5
-    );
+  else if (HL) ctxos.drawImage(res["FlickHL"], -res["FlickHL"].width * 0.5, -res["FlickHL"].height * 0.5);
+  else ctxos.drawImage(res["Flick"], -res["Flick"].width * 0.5, -res["Flick"].height * 0.5);
 }
 //调节画面尺寸和全屏相关(返回source播放aegleseeker会出现迷之error)
 function adjustSize(source, dest, scale) {
@@ -2672,18 +2244,8 @@ function adjustSize(source, dest, scale) {
   const dw = dest.width;
   const dh = dest.height;
   if (dw * sh > dh * sw)
-    return [
-      (dw * (1 - scale)) / 2,
-      (dh - ((dw * sh) / sw) * scale) / 2,
-      dw * scale,
-      ((dw * sh) / sw) * scale,
-    ];
-  return [
-    (dw - ((dh * sw) / sh) * scale) / 2,
-    (dh * (1 - scale)) / 2,
-    ((dh * sw) / sh) * scale,
-    dh * scale,
-  ];
+    return [(dw * (1 - scale)) / 2, (dh - ((dw * sh) / sw) * scale) / 2, dw * scale, ((dw * sh) / sw) * scale];
+  return [(dw - ((dh * sw) / sh) * scale) / 2, (dh * (1 - scale)) / 2, ((dh * sw) / sh) * scale, dh * scale];
 }
 /**@type {Map<ImageBitmap,LineImage>} */
 const lineImages = new Map();
@@ -2797,14 +2359,7 @@ function hex2rgba(color) {
 }
 //rgba数组(0-1)转十六进制
 function rgba2hex(...rgba) {
-  return (
-    "#" +
-    rgba
-      .map((i) =>
-        ("00" + Math.round(Number(i) * 255 || 0).toString(16)).slice(-2)
-      )
-      .join("")
-  );
+  return "#" + rgba.map((i) => ("00" + Math.round(Number(i) * 255 || 0).toString(16)).slice(-2)).join("");
 }
 //debug
 self.app = app;

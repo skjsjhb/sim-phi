@@ -39,11 +39,7 @@
   </head>
 
   <body>
-    <noscript
-      ><strong style="color: #f00"
-        >此浏览器不支持JavaScript，该脚本无法运行。</strong
-      ></noscript
-    >
+    <noscript><strong style="color: #f00">此浏览器不支持JavaScript，该脚本无法运行。</strong></noscript>
     <div class="index">
       <div class="main">
         <h1 class="title"></h1>
@@ -62,9 +58,7 @@
         <input type="button" value="重置" onclick="location.reload(true)" />
         <input type="button" id="btn-more" value="更多设置" />
         <div id="select" class="disabled">
-          <div>
-            谱面：<select id="select-chart" style="width: 6em"></select>
-          </div>
+          <div>谱面：<select id="select-chart" style="width: 6em"></select></div>
           <div>音乐：<select id="select-bgm" style="width: 6em"></select></div>
           <div>图片：<select id="select-bg" style="width: 6em"></select></div>
           <br />
@@ -99,38 +93,16 @@
             </select>
           </div>
           <br />
+          <div>曲名：<input id="input-name" class="input" style="width: 7em" placeholder="&#60; Untitled &#62;" /></div>
           <div>
-            曲名：<input
-              id="input-name"
-              class="input"
-              style="width: 7em"
-              placeholder="&#60; Untitled &#62;"
-            />
-          </div>
-          <div>
-            曲师：<input
-              id="input-artist"
-              class="input"
-              style="width: 7em"
-              placeholder="&#60; nameless &#62;"
-            />
+            曲师：<input id="input-artist" class="input" style="width: 7em" placeholder="&#60; nameless &#62;" />
           </div>
           <br />
           <div>
-            曲绘：<input
-              id="input-illustrator"
-              class="input"
-              style="width: 7em"
-              placeholder="&#60; nameless &#62;"
-            />
+            曲绘：<input id="input-illustrator" class="input" style="width: 7em" placeholder="&#60; nameless &#62;" />
           </div>
           <div>
-            谱师：<input
-              id="input-charter"
-              class="input"
-              style="width: 7em"
-              placeholder="&#60; nameless &#62;"
-            />
+            谱师：<input id="input-charter" class="input" style="width: 7em" placeholder="&#60; nameless &#62;" />
           </div>
           <br />
           <div>
@@ -174,36 +146,14 @@
             </select>
           </div>
           <br />
-          <div>
-            <input type="checkbox" id="feedback" checked /><label for="feedback"
-              >触摸反馈</label
-            >
-          </div>
-          <div>
-            <input type="checkbox" id="imageBlur" checked /><label
-              for="imageBlur"
-              >背景模糊</label
-            >
-          </div>
-          <div>
-            <input type="checkbox" id="highLight" checked /><label
-              for="highLight"
-              >多押高亮</label
-            >
-          </div>
+          <div><input type="checkbox" id="feedback" checked /><label for="feedback">触摸反馈</label></div>
+          <div><input type="checkbox" id="imageBlur" checked /><label for="imageBlur">背景模糊</label></div>
+          <div><input type="checkbox" id="highLight" checked /><label for="highLight">多押高亮</label></div>
           <br />
-          <div>
-            <input type="checkbox" id="lineColor" checked /><label
-              for="lineColor"
-              >FC/AP指示器</label
-            >
-          </div>
+          <div><input type="checkbox" id="lineColor" checked /><label for="lineColor">FC/AP指示器</label></div>
 
           <div class="disabled-when-playing">
-            <input type="checkbox" id="showTransition" checked /><label
-              for="showTransition"
-              >过渡动画</label
-            >
+            <input type="checkbox" id="showTransition" checked /><label for="showTransition">过渡动画</label>
           </div>
           <br />
           <div class="">
@@ -215,12 +165,7 @@
             </select>
           </div>
           <div class="disabled-when-playing">
-            音乐变速：<input
-              id="select-speed"
-              type="text"
-              value="1.00"
-              style="width: 4em"
-            />
+            音乐变速：<input id="select-speed" type="text" value="1.00" style="width: 4em" />
           </div>
           <br />
           <div class="disabled-when-playing">
@@ -238,9 +183,7 @@
           <div class="disabled-when-playing">
             <b>== 模组 ==</b>
             <br />
-            <span style="color: red"
-              >请在上传谱面后再启用模组, 否则无法正常读取.</span
-            >
+            <span style="color: red">请在上传谱面后再启用模组, 否则无法正常读取.</span>
             <br />
             <input type="button" id="helpmods" value="模组说明" />
             <br />
@@ -248,9 +191,8 @@
             <input type="checkbox" id="mod-ez" />
             <label title="各方面难度都降低一点" for="mod-ez">Easy</label>
             <span class="md"
-              >判定时间扩大一倍<br />横向判定区域扩大 25%<br />取消 Bad 判定
-              <br />连击断开时保留一定的连击数, 与 Half Time 的效果不叠加<br />Hold
-              可以中间松开而不视为 Miss</span
+              >判定时间扩大一倍<br />横向判定区域扩大 25%<br />取消 Bad 判定 <br />连击断开时保留一定的连击数, 与 Half
+              Time 的效果不叠加<br />Hold 可以中间松开而不视为 Miss</span
             >
 
             <input type="checkbox" id="mod-rl" />
@@ -260,8 +202,7 @@
             <input type="checkbox" id="mod-ht" />
             <label title="降低速度" for="mod-ht">Half Time</label>
             <span class="md"
-              >谱面速度降低 25%, 判定时间相应增长<br />Miss 两次才会断掉 Combo,
-              与 Easy 的效果不叠加且本模组优先</span
+              >谱面速度降低 25%, 判定时间相应增长<br />Miss 两次才会断掉 Combo, 与 Easy 的效果不叠加且本模组优先</span
             >
 
             <input type="checkbox" id="mod-fo" />
@@ -270,25 +211,18 @@
 
             <input type="checkbox" id="mod-nf" />
             <label title="接住你漏掉的 Drag" for="mod-nf">No Fall</label>
-            <span class="md"
-              >Drag 由系统为你代打<br />Hold 可以中间松开而不视为 Miss</span
-            >
+            <span class="md">Drag 由系统为你代打<br />Hold 可以中间松开而不视为 Miss</span>
 
             <br />
 
             挑战：
             <input type="checkbox" id="mod-hr" />
             <label title="各方面难度都提升一点" for="mod-hr">Hard Rock</label>
-            <span class="md"
-              >判定区间缩短一半<br />Bad 的判定仅略微减短<br />横向判定区域削减
-              25%</span
-            >
+            <span class="md">判定区间缩短一半<br />Bad 的判定仅略微减短<br />横向判定区域削减 25%</span>
 
             <input type="checkbox" id="mod-eb" />
             <label title="不接受 Good" for="mod-eb">Elite Beat</label>
-            <span class="md"
-              >Good(Early) 判定都算作 Bad, Good(Late) 无法打出</span
-            >
+            <span class="md">Good(Early) 判定都算作 Bad, Good(Late) 无法打出</span>
 
             <input type="checkbox" id="mod-dt" />
             <label title="加快速度" for="mod-dt">Double Time</label>
@@ -297,25 +231,20 @@
             <input type="checkbox" id="mod-hd" />
             <label title="Note 在到达判定线之前消失" for="mod-hd">Hidden</label>
             <span class="md"
-              >Tap, Drag 和 Flick 在到达判定线之前会淡出并消失<br />Hold
-              不会消失但会降低亮度<br />
+              >Tap, Drag 和 Flick 在到达判定线之前会淡出并消失<br />Hold 不会消失但会降低亮度<br />
               作为补偿, 略微扩大判定范围</span
             >
 
             <input type="checkbox" id="mod-fl" />
             <label title="判定线逐渐消失" for="mod-fl">Fade Line</label>
-            <span class="md"
-              >Combo 越多判定线亮度越低, 在 100 连击的时候彻底消失.</span
-            >
+            <span class="md">Combo 越多判定线亮度越低, 在 100 连击的时候彻底消失.</span>
 
             <br />
 
             分数系统：
             <input type="checkbox" id="mod-sk" />
             <label title="模拟课题模式" for="mod-sk">Skill</label>
-            <span class="md"
-              >模拟课题模式, 削减判定范围, 取消连击分<br />其它模组的分数加成不适用</span
-            >
+            <span class="md">模拟课题模式, 削减判定范围, 取消连击分<br />其它模组的分数加成不适用</span>
 
             <input type="checkbox" id="mod-is" />
             <label title="试试新的计分系统" for="mod-is">InfScore</label>
@@ -333,10 +262,7 @@
 
             <input type="checkbox" id="replay" />
             <label title="观看上一次回放" for="replay">Replay</label>
-            <span class="md"
-              >在游玩过一次后, 观看回放<br />不要改变模组配置, 可能会出
-              Bug</span
-            >
+            <span class="md">在游玩过一次后, 观看回放<br />不要改变模组配置, 可能会出 Bug</span>
             <br />
           </div>
           <br />
@@ -353,8 +279,7 @@
         </div>
         <div><strong id="msg-out">初始化...</strong></div>
         <div id="stage">
-          <i class="tl">&#xe900;</i><i class="tr">&#xe902;</i
-          ><i class="bl">&#xe909;</i><i class="br">&#xe904;</i>
+          <i class="tl">&#xe900;</i><i class="tr">&#xe902;</i><i class="bl">&#xe909;</i><i class="br">&#xe904;</i>
           <div id="mask">
             <div>GitHub: lchz&#104;3473/sim-phi</div>
             <div style="font-size: small">Modded at skjsjhb/sim-phi-modded</div>
@@ -377,37 +302,12 @@
           </div>
           <div class="view-content">
             <div id="view-config">
-              <div>
-                <input type="checkbox" id="showCE2" /><label for="showCE2"
-                  >Early/Late特效</label
-                >
-              </div>
-              <div>
-                <input type="checkbox" id="showPoint" /><label for="showPoint"
-                  >显示定位点</label
-                >
-              </div>
-              <div>
-                <input type="checkbox" id="showAcc" /><label for="showAcc"
-                  >显示Acc</label
-                >
-              </div>
-              <div>
-                <input type="checkbox" id="showStat" /><label for="showStat"
-                  >显示统计</label
-                >
-              </div>
-              <div>
-                <input type="checkbox" id="lowRes" /><label for="lowRes"
-                  >低分辨率</label
-                >
-              </div>
-              <div>
-                <input type="checkbox" id="lockOri" checked /><label
-                  for="lockOri"
-                  >横屏锁定</label
-                >
-              </div>
+              <div><input type="checkbox" id="showCE2" /><label for="showCE2">Early/Late特效</label></div>
+              <div><input type="checkbox" id="showPoint" /><label for="showPoint">显示定位点</label></div>
+              <div><input type="checkbox" id="showAcc" /><label for="showAcc">显示Acc</label></div>
+              <div><input type="checkbox" id="showStat" /><label for="showStat">显示统计</label></div>
+              <div><input type="checkbox" id="lowRes" /><label for="lowRes">低分辨率</label></div>
+              <div><input type="checkbox" id="lockOri" checked /><label for="lockOri">横屏锁定</label></div>
               <br />
             </div>
           </div>
@@ -419,9 +319,8 @@
         Mods &copy;&nbsp;2023&nbsp;skjsjhb, contact via
         <a href="mailto:skjsjhb@outlook.com">E-mail</a>
         <br />
-        The copyright of the assets used in the project belongs to the copyright
-        owner or unit, and they are only used for learning and communication. In
-        case of infringement, please contact to delete.
+        The copyright of the assets used in the project belongs to the copyright owner or unit, and they are only used
+        for learning and communication. In case of infringement, please contact to delete.
       </p>
     </div>
   </body>

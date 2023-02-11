@@ -285,6 +285,7 @@ class Renderer {
     this.bgImage = null;
     this.bgImageBlur = null;
     this.bgMusic = null;
+    this.bgVideo = null;
     this.lines = [];
     this.notes = [];
     this.taps = [];
