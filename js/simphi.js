@@ -45,9 +45,7 @@ class Stat {
     } else if (app.mods.has("is")) {
       return isFinite(this.innerScore) ? this.innerScore : 0;
     } else {
-      const a =
-        (1e6 * (this.perfect * 0.9 + this.good * 0.585 + this.maxcombo * 0.1)) /
-        this.numOfNotes;
+      const a = (1e6 * (this.perfect * 0.9 + this.good * 0.585 + this.maxcombo * 0.1)) / this.numOfNotes;
       return isFinite(a) ? a : 0;
     }
   }
@@ -56,11 +54,7 @@ class Stat {
       return Math.round(this.getScoreNum(app)) + "?";
     } else {
       const a = this.getScoreNum(app).toFixed(0);
-      return (
-        "0".repeat(a.length < 7 ? 7 - a.length : 0) +
-        a +
-        (app.mods.has("sk") ? "*" : "")
-      );
+      return "0".repeat(a.length < 7 ? 7 - a.length : 0) + a + (app.mods.has("sk") ? "*" : "");
     }
   }
   get accNum() {
@@ -86,7 +80,7 @@ class Stat {
   getRankStatus(app) {
     let hasIS = false;
     if (app.mods.has("is")) {
-      app.mods.remove("is");
+      app.mods.delete("is");
       hasIS = true;
     }
     // Get original score without IS
@@ -136,14 +130,10 @@ class Stat {
     const l3 = this.level.toString(36).slice(-1);
     const a = (parseInt(s2, 32) - 40672).toFixed(0);
     const scoreBest = "0".repeat(a.length < 7 ? 7 - a.length : 0) + a;
-    if (!isAuto)
-      this.data[this.id] = (s1 > l1 ? s1 : l1) + (s2 > l2 ? s2 : l2) + l3;
+    if (!isAuto) this.data[this.id] = (s1 > l1 ? s1 : l1) + (s2 > l2 ? s2 : l2) + l3;
     const arr = [];
     for (const i in this.data) arr.push(i + this.data[i]);
-    localStorage.setItem(
-      `phi-${speed}`,
-      arr.sort(() => Math.random() - 0.5).join("")
-    );
+    localStorage.setItem(`phi-${speed}`, arr.sort(() => Math.random() - 0.5).join(""));
     const pbj = {
       newBestColor: s2 < l2 ? "#18ffbf" : "#fff",
       newBestStr: s2 < l2 ? "NEW BEST" : "BEST",
@@ -254,8 +244,7 @@ class Renderer {
     this.canvasos = document.createElement("canvas"); //绘制游戏主界面
     this.ctxos = this.canvasos.getContext("2d");
     this.stage.appendChild(this.canvas);
-    this.canvas.style.cssText =
-      ";position:absolute;top:0px;left:0px;right:0px;bottom:0px";
+    this.canvas.style.cssText = ";position:absolute;top:0px;left:0px;right:0px;bottom:0px";
     this.isFull = false;
     console.log("Hello, Phi\x67ros Simulator!");
     //qwq
@@ -383,10 +372,7 @@ class Renderer {
     this.hlen = canvasos.height / 2;
     this.mirrorView();
     this.setNoteScale(this.noteScale);
-    this.lineScale =
-      canvasos.width > canvasos.height * 0.75
-        ? canvasos.height / 18.75
-        : canvasos.width / 14.0625; //判定线、文字缩放
+    this.lineScale = canvasos.width > canvasos.height * 0.75 ? canvasos.height / 18.75 : canvasos.width / 14.0625; //判定线、文字缩放
   }
   resizeCanvas() {
     const { clientWidth: width, clientHeight: height } = this.stage;
@@ -445,9 +431,7 @@ class Renderer {
       note.lineId = lineId;
       note.noteId = noteId;
       note.isAbove = isAbove;
-      note.name = `${lineId}${isAbove ? "+" : "-"}${noteId}${
-        " tdhf".split("")[note.type]
-      }`;
+      note.name = `${lineId}${isAbove ? "+" : "-"}${noteId}${" tdhf".split("")[note.type]}`;
       this.notes.push(note);
       if (note.type === 1) this.taps.push(note);
       else if (note.type === 2) this.drags.push(note);
@@ -456,8 +440,7 @@ class Renderer {
       if (note.type === 3) this.reverseholds.push(note);
       if (note.type === 1 || note.type === 3) this.tapholds.push(note);
     };
-    const sortNote = (a, b) =>
-      a.realTime - b.realTime || a.lineId - b.lineId || a.noteId - b.noteId;
+    const sortNote = (a, b) => a.realTime - b.realTime || a.lineId - b.lineId || a.noteId - b.noteId;
     //优化events
     chartNew.judgeLineList.forEach((i, lineId) => (i.lineId = lineId));
     for (const i of chartNew.judgeLineList) {
@@ -468,9 +451,7 @@ class Renderer {
       i.rotation = 0;
       i.positionY = 0; //临时过渡用
       i.speedEvents = normalizeSpeedEvent(i.speedEvents);
-      i.judgeLineDisappearEvents = normalizeLineEvent(
-        i.judgeLineDisappearEvents
-      );
+      i.judgeLineDisappearEvents = normalizeLineEvent(i.judgeLineDisappearEvents);
       i.judgeLineMoveEvents = normalizeLineEvent(i.judgeLineMoveEvents);
       i.judgeLineRotateEvents = normalizeLineEvent(i.judgeLineRotateEvents);
       addRealTime(i.speedEvents, i.bpm);
@@ -478,12 +459,8 @@ class Renderer {
       addRealTime(i.judgeLineMoveEvents, i.bpm);
       addRealTime(i.judgeLineRotateEvents, i.bpm);
       this.lines.push(i); //qwq可以定义新类防止函数在循环里定义
-      i.notesAbove.forEach((j, noteId) =>
-        addNote(j, 1.875 / i.bpm, i.lineId, noteId, true)
-      );
-      i.notesBelow.forEach((j, noteId) =>
-        addNote(j, 1.875 / i.bpm, i.lineId, noteId, false)
-      );
+      i.notesAbove.forEach((j, noteId) => addNote(j, 1.875 / i.bpm, i.lineId, noteId, true));
+      i.notesBelow.forEach((j, noteId) => addNote(j, 1.875 / i.bpm, i.lineId, noteId, false));
     }
     this.notes.sort(sortNote);
     this.taps.sort(sortNote);
@@ -494,12 +471,8 @@ class Renderer {
     this.tapholds.sort(sortNote);
     //多押标记
     const timeOfMulti = {};
-    for (const i of this.notes)
-      timeOfMulti[i.realTime.toFixed(6)] = timeOfMulti[i.realTime.toFixed(6)]
-        ? 2
-        : 1;
-    for (const i of this.notes)
-      i.isMulti = timeOfMulti[i.realTime.toFixed(6)] === 2;
+    for (const i of this.notes) timeOfMulti[i.realTime.toFixed(6)] = timeOfMulti[i.realTime.toFixed(6)] ? 2 : 1;
+    for (const i of this.notes) i.isMulti = timeOfMulti[i.realTime.toFixed(6)] === 2;
     //分析邻近Note(0.01s内标记，用于预处理Flick,TapHold重叠判定)
     for (let i = 0; i < this.flicks.length; i++) {
       const note = this.flicks[i];
@@ -635,9 +608,7 @@ class Chart {
     this.offset = parseFloat(chart.offset) || 0;
     this.numOfNotes = parseInt(chart.numOfNotes) || 0;
     /** @type {JudgeLine[]} */
-    this.judgeLineList = Array.isArray(chart.judgeLineList)
-      ? chart.judgeLineList.map((i) => new JudgeLine(i))
-      : [];
+    this.judgeLineList = Array.isArray(chart.judgeLineList) ? chart.judgeLineList.map((i) => new JudgeLine(i)) : [];
   }
 }
 class JudgeLine {
@@ -648,17 +619,11 @@ class JudgeLine {
     this.numOfNotesBelow = parseInt(line.numOfNotesBelow) || 0;
     this.bpm = parseFloat(line.bpm) || 0;
     /** @type {SpeedEvent[]} */
-    this.speedEvents = Array.isArray(line.speedEvents)
-      ? line.speedEvents.map((i) => new SpeedEvent(i))
-      : [];
+    this.speedEvents = Array.isArray(line.speedEvents) ? line.speedEvents.map((i) => new SpeedEvent(i)) : [];
     /** @type {Note[]} */
-    this.notesAbove = Array.isArray(line.notesAbove)
-      ? line.notesAbove.map((i) => new Note(i))
-      : [];
+    this.notesAbove = Array.isArray(line.notesAbove) ? line.notesAbove.map((i) => new Note(i)) : [];
     /** @type {Note[]} */
-    this.notesBelow = Array.isArray(line.notesBelow)
-      ? line.notesBelow.map((i) => new Note(i))
-      : [];
+    this.notesBelow = Array.isArray(line.notesBelow) ? line.notesBelow.map((i) => new Note(i)) : [];
     /** @type {LineEvent[]} */
     this.judgeLineDisappearEvents = Array.isArray(line.judgeLineDisappearEvents)
       ? line.judgeLineDisappearEvents.map((i) => new LineEvent(i))
@@ -707,8 +672,7 @@ class LineEvent {
 //规范判定线事件
 function normalizeLineEvent(events = []) {
   const oldEvents = events.map((i) => new LineEvent(i)); //深拷贝
-  if (!oldEvents.length)
-    return [new LineEvent({ startTime: -999999, endTime: 1e9 })]; //如果没有事件，添加一个默认事件(以后添加warning)
+  if (!oldEvents.length) return [new LineEvent({ startTime: -999999, endTime: 1e9 })]; //如果没有事件，添加一个默认事件(以后添加warning)
   const newEvents = [
     new LineEvent({
       startTime: -999999,
@@ -753,13 +717,10 @@ function normalizeLineEvent(events = []) {
           startTime: i1.endTime,
           endTime: i2.endTime,
           start:
-            (i2.start * (i2.endTime - i1.endTime) +
-              i2.end * (i1.endTime - i2.startTime)) /
-            (i2.endTime - i2.startTime),
+            (i2.start * (i2.endTime - i1.endTime) + i2.end * (i1.endTime - i2.startTime)) / (i2.endTime - i2.startTime),
           end: i1.end,
           start2:
-            (i2.start2 * (i2.endTime - i1.endTime) +
-              i2.end2 * (i1.endTime - i2.startTime)) /
+            (i2.start2 * (i2.endTime - i1.endTime) + i2.end2 * (i1.endTime - i2.startTime)) /
             (i2.endTime - i2.startTime),
           end2: i1.end2,
         })
