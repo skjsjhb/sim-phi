@@ -249,8 +249,8 @@
             <label title="各方面难度都降低一点" for="mod-ez">Easy</label>
             <span class="md"
               >判定时间扩大一倍<br />横向判定区域扩大 25%<br />取消 Bad 判定
-              <br />连击断开时保留一定的连击数<br />Hold 可以中间松开而不视为
-              Miss</span
+              <br />连击断开时保留一定的连击数, 与 Half Time 的效果不叠加<br />Hold
+              可以中间松开而不视为 Miss</span
             >
 
             <input type="checkbox" id="mod-rl" />
@@ -260,8 +260,8 @@
             <input type="checkbox" id="mod-ht" />
             <label title="降低速度" for="mod-ht">Half Time</label>
             <span class="md"
-              >谱面速度降低 25%, 判定时间相应增长<br />Miss 两次才会断掉
-              Combo</span
+              >谱面速度降低 25%, 判定时间相应增长<br />Miss 两次才会断掉 Combo,
+              与 Easy 的效果不叠加且本模组优先</span
             >
 
             <input type="checkbox" id="mod-fo" />
@@ -308,6 +308,21 @@
               >Combo 越多判定线亮度越低, 在 100 连击的时候彻底消失.</span
             >
 
+            <br />
+
+            分数系统：
+            <input type="checkbox" id="mod-sk" />
+            <label title="模拟课题模式" for="mod-sk">Skill</label>
+            <span class="md"
+              >模拟课题模式, 削减判定范围, 取消连击分<br />其它模组的分数加成不适用</span
+            >
+
+            <input type="checkbox" id="mod-is" />
+            <label title="试试新的计分系统" for="mod-is">InfScore</label>
+            <span class="md"
+              >Perfect 计 100, Good 计 65, Bad 计 1<br />并乘算当前的连击数<br />没有分数上限!
+              打出更高的连击来获得更多分数!</span
+            >
             <br />
 
             回放：

@@ -20,6 +20,7 @@ class Stat {
     this.maxcombo = 0;
     this.combo = 0;
     this.comboHTPreserve = false;
+    this.innerScore = 0;
   }
   get good() {
     return this.noteRank[7] + this.noteRank[3];
@@ -36,15 +37,31 @@ class Stat {
   get all() {
     return this.perfect + this.good + this.bad;
   }
-  get scoreNum() {
-    const a =
-      (1e6 * (this.perfect * 0.9 + this.good * 0.585 + this.maxcombo * 0.1)) /
-      this.numOfNotes;
-    return isFinite(a) ? a : 0;
+  getScoreNum(app) {
+    if (app.mods.has("sk")) {
+      // SK
+      const a = (1e6 * (this.perfect + this.good * 0.65)) / this.numOfNotes;
+      return isFinite(a) ? a : 0;
+    } else if (app.mods.has("is")) {
+      return isFinite(this.innerScore) ? this.innerScore : 0;
+    } else {
+      const a =
+        (1e6 * (this.perfect * 0.9 + this.good * 0.585 + this.maxcombo * 0.1)) /
+        this.numOfNotes;
+      return isFinite(a) ? a : 0;
+    }
   }
   get scoreStr() {
-    const a = this.scoreNum.toFixed(0);
-    return "0".repeat(a.length < 7 ? 7 - a.length : 0) + a;
+    if (app.mods.has("is")) {
+      return Math.round(this.getScoreNum(app)) + "?";
+    } else {
+      const a = this.getScoreNum(app).toFixed(0);
+      return (
+        "0".repeat(a.length < 7 ? 7 - a.length : 0) +
+        a +
+        (app.mods.has("sk") ? "*" : "")
+      );
+    }
   }
   get accNum() {
     const a = (this.perfect + this.good * 0.65) / this.all;
@@ -67,7 +84,7 @@ class Stat {
     return 1;
   }
   getRankStatus(app) {
-    const a = Math.round(this.scoreNum);
+    const a = Math.round(this.getScoreNum(app));
 
     if (a >= 1e6) {
       if (app.mods.has("hd") || app.mods.has("fl")) {
@@ -86,7 +103,7 @@ class Stat {
     const l1 = Math.round(this.accNum * 1e4 + 566)
       .toString(22)
       .slice(-3);
-    const l2 = Math.round(this.scoreNum + 40672)
+    const l2 = Math.round(this.getScoreNum(app) + 40672)
       .toString(32)
       .slice(-4);
     const l3 = this.level.toString(36).slice(-1);
@@ -103,7 +120,7 @@ class Stat {
     const l1 = Math.round(this.accNum * 1e4 + 566)
       .toString(22)
       .slice(-3);
-    const l2 = Math.round(this.scoreNum + 40672)
+    const l2 = Math.round(this.getScoreNum(app) + 40672)
       .toString(32)
       .slice(-4);
     const l3 = this.level.toString(36).slice(-1);
@@ -158,6 +175,7 @@ class Stat {
     this.curDisp = 0;
     this.numDisp = 0;
     this.data = {};
+    this.innerScore = 0;
     if (speed === "" && localStorage.getItem("phi")) {
       localStorage.setItem(key, localStorage.getItem("phi"));
       localStorage.removeItem("phi");
@@ -174,7 +192,19 @@ class Stat {
     }
   }
   addCombo(status, type, app) {
-    this.noteRank[status]++;
+    if (app.mods.has("is")) {
+      if (status === 4 || status === 5 || status === 1) {
+        // Perfect
+        this.innerScore += 100 * (this.combo + 1);
+      } else if (status === 6 || status === 2) {
+        // Bad
+        this.innerScore += 1 * (this.combo + 1);
+      } else if (status === 7 || status === 3) {
+        // Good
+        this.innerScore += 65 * (this.combo + 1);
+      }
+    }
+    this.noteRank[status]++; // Add specified
     if (status % 4 === 2) {
       if (app.mods.has("ht")) {
         if (this.comboHTPreserve) {
@@ -305,6 +335,12 @@ class Renderer {
       jdmIn.perfect = jdmIn.good;
       jdmIn.good = jdmIn.touch;
       jdmIn.rainbow = jdmIn.perfect;
+    }
+    if (this.mods.has("sk")) {
+      jdmIn.touch /= 2;
+      jdmIn.good /= 2;
+      jdmIn.perfect /= 2;
+      jdmIn.rainbow /= 2;
     }
     if (this.mods.has("eb")) {
       jdmIn.good = jdmIn.perfect;
