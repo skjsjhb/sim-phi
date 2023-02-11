@@ -59,14 +59,6 @@
             <label id="uploader-dir">上传文件夹</label>
           </div>
         </div>
-        <input
-          type="button"
-          id="legacy"
-          class="hide"
-          value="Legacy"
-          onclick="location.replace('/sim-phi-legacy')"
-        />
-        <input type="button" id="demo" class="hide" value="Demo" />
         <input type="button" value="重置" onclick="location.reload(true)" />
         <input type="button" id="btn-more" value="更多设置" />
         <div id="select" class="disabled">
@@ -273,8 +265,8 @@
             >
 
             <input type="checkbox" id="mod-fo" />
-            <label title="Flick 会自动判定" for="mod-fo">Flick Over</label>
-            <span class="md">Flick 由系统为你代打</span>
+            <label title="Flick 只要接住就行" for="mod-fo">Flick Over</label>
+            <span class="md">接住即可判定 Flick, 像 Drag 一样</span>
 
             <input type="checkbox" id="mod-nf" />
             <label title="接住你漏掉的 Drag" for="mod-nf">No Fall</label>
@@ -282,9 +274,6 @@
               >Drag 由系统为你代打<br />Hold 可以中间松开而不视为 Miss</span
             >
 
-            <input type="checkbox" id="autoplay" />
-            <label title="观看完美的回放" for="autoplay">Auto</label>
-            <span class="md">原来的 Autoplay, 自动播放</span>
             <br />
 
             挑战：
@@ -303,7 +292,7 @@
 
             <input type="checkbox" id="mod-dt" />
             <label title="加快速度" for="mod-dt">Double Time</label>
-            <span class="md">谱面速度提升 50%, 判定时间相应缩短<br /></span>
+            <span class="md">谱面速度提升 25%, 判定时间相应缩短<br /></span>
 
             <input type="checkbox" id="mod-hd" />
             <label title="Note 在到达判定线之前消失" for="mod-hd">Hidden</label>
@@ -314,14 +303,33 @@
             >
 
             <input type="checkbox" id="mod-fl" />
-            <label title="判定线的亮度随 Combo 而降低" for="mod-fl"
-              >Fade Line</label
-            >
+            <label title="判定线逐渐消失" for="mod-fl">Fade Line</label>
             <span class="md"
-              >Combo 越多判定线亮度越低, 在 200 连击的时候彻底消失.</span
+              >Combo 越多判定线亮度越低, 在 100 连击的时候彻底消失.</span
             >
+
+            <br />
+
+            回放：
+
+            <input type="checkbox" id="autoplay" />
+            <label title="sudo 板子自己打歌" for="autoplay">Auto</label>
+            <span class="md">原来的 Autoplay, 自动播放</span>
+
+            <input type="checkbox" id="replay" />
+            <label title="观看上一次回放" for="replay">Replay</label>
+            <span class="md"
+              >在游玩过一次后, 观看回放<br />不要改变模组配置, 可能会出
+              Bug</span
+            >
+            <br />
           </div>
           <br />
+          <br />
+          <div>
+            <input type="button" id="btn-export-replay" value="导出回放" />
+            <input type="button" id="btn-import-replay" value="导入回放" />
+          </div>
           <br />
           <div>
             <input type="button" id="btn-play" value="播放" />

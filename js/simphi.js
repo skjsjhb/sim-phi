@@ -70,7 +70,7 @@ class Stat {
     const a = Math.round(this.scoreNum);
 
     if (a >= 1e6) {
-      if (app.mods.has("hd")) {
+      if (app.mods.has("hd") || app.mods.has("fl")) {
         return 0;
       }
       return 1;
@@ -176,16 +176,16 @@ class Stat {
   addCombo(status, type, app) {
     this.noteRank[status]++;
     if (status % 4 === 2) {
-      if (app.mods.has("ez")) {
-        this.combo = Math.round(this.combo / 3);
-      } else if (app.mods.has("ht")) {
+      if (app.mods.has("ht")) {
         if (this.comboHTPreserve) {
-          this.combo = 0;
+          this.combo = 0; // Broken
           this.comboHTPreserve = false;
         } else {
           // Skip it without adding
           this.comboHTPreserve = true;
         }
+      } else if (app.mods.has("ez")) {
+        this.combo = Math.round(this.combo / 3);
       } else {
         this.combo = 0;
       }
@@ -245,7 +245,7 @@ class Renderer {
     // this.perfectNote = '#ffeca0';
     // this.goodNote = '#b4e1ff';
     // this.badNote = '#6c4343';
-    this.playMode = 1; //0:game,1:auto,2:hyper,3:auto&hyper
+    this.playMode = 1; //0:game,1:auto,2:hyper,3:auto&hyper,4:replay
     this.musicVolume = 1;
     this.soundVolume = 1;
     // this.showTransition = true;
@@ -277,7 +277,7 @@ class Renderer {
   }
 
   getModsTimingModifier() {
-    return this.mods.has("dt") ? 1.5 : this.mods.has("ht") ? 0.75 : 1;
+    return this.mods.has("dt") ? 1.25 : this.mods.has("ht") ? 0.75 : 1;
   }
 
   applyJDMModifier(jdmIn) {
@@ -286,10 +286,10 @@ class Renderer {
     jdmIn.perfect = 0.08;
     jdmIn.rainbow = 0.04;
     if (this.mods.has("dt")) {
-      jdmIn.touch /= 1.5;
-      jdmIn.good /= 1.5;
-      jdmIn.perfect /= 1.5;
-      jdmIn.rainbow /= 1.5;
+      jdmIn.touch /= 1.25;
+      jdmIn.good /= 1.25;
+      jdmIn.perfect /= 1.25;
+      jdmIn.rainbow /= 1.25;
     } else if (this.mods.has("ht")) {
       jdmIn.touch /= 0.75;
       jdmIn.good /= 0.75;
