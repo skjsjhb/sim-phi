@@ -84,7 +84,17 @@ class Stat {
     return 1;
   }
   getRankStatus(app) {
+    let hasIS = false;
+    if (app.mods.has("is")) {
+      app.mods.remove("is");
+      hasIS = true;
+    }
+    // Get original score without IS
     const a = Math.round(this.getScoreNum(app));
+
+    if (hasIS) {
+      app.mods.add("is");
+    }
 
     if (a >= 1e6) {
       if (app.mods.has("hd") || app.mods.has("fl")) {
