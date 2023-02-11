@@ -722,7 +722,7 @@ const judgeManager = {
         }
       } else if (note.type === 4) {
         //Flick音符
-        if (deltaTime > 0) {
+        if (deltaTime > 0 || note.status !== 4) {
           for (const judgeEvent of list) {
             if (judgeEvent.type !== 1) continue; //跳过非Tap判定
             if (getJudgeOffset(judgeEvent, note) > width) continue;
@@ -1169,7 +1169,38 @@ document.addEventListener("DOMContentLoaded", async function qwq() {
               if (ext && ext[0] === "m") {
                 const data = decode(img, Number(ext.slice(1))).result;
                 // 小米浏览器出现问题：decode出来的数据部分被有损压缩导致资源加载失败
-                res[name] = await audio.decode(data);
+                res[name] = await audio.decode(data).catch(async (err) => {
+                  const blob = await fetch(raw.alternative[name], { referrerPolicy: "no-referrer" }).then((i) =>
+                    i.blob()
+                  );
+                  return await createImageBitmap(blob)
+                    .then(decodeAlt)
+                    .then(audio.decode.bind(audio))
+                    .catch((err) => {
+                      msgHandler.sendWarning(
+                        `您的浏览器存在问题，将导致以下音频无法正常播放：\n${name}(${err.message})\n如果多次刷新问题仍然存在，建议更换设备或浏览器。`
+                      );
+                      return audio.mute(1);
+                    });
+
+                  function decodeAlt(img) {
+                    const canvas = document.createElement("canvas");
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0);
+                    const id = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const ab = new Uint8Array((id.data.length / 4) * 3);
+                    const mask = (v, i) => v ^ ((i ** 2 * 3473) & 255);
+                    for (let i = 0; i < ab.length; i++) ab[i] = id.data[((i / 3) | 0) * 4 + (i % 3)];
+                    const combined = new Uint8Array(ab.length / 2);
+                    for (let i = 0; i < ab.length / 2; i++) {
+                      combined[i] = mask((((ab[i * 2] + 8) / 17) << 4) | ((ab[i * 2 + 1] + 8) / 17), i);
+                    }
+                    const size = new DataView(combined.buffer, 0, 4).getUint32(0);
+                    return combined.buffer.slice(4, size + 4);
+                  }
+                });
               } else {
                 res[name] = await createImageBitmap(
                   img,
@@ -1357,7 +1388,9 @@ btnPlay.addEventListener("click", async function () {
 });
 btnPause.addEventListener("click", async function () {
   if (this.classList.contains("disabled") || btnPlay.value === "播放") return;
+  this.classList.add("disabled");
   if (this.value === "暂停") {
+    if (app.bgVideo) app.bgVideo.pause();
     timerIn.pause();
     if (showTransition.checked && isOutStart) timerOut.pause();
     isPaused = true;
@@ -1365,13 +1398,24 @@ btnPause.addEventListener("click", async function () {
     curTime = timeBgm;
     audio.stop();
   } else {
+    if (app.bgVideo) await playVideo(app.bgVideo, timeBgm * app.speed);
     timerIn.play();
     if (showTransition.checked && isOutStart) timerOut.play();
     isPaused = false;
     if (isInEnd && !isOutStart) playBgm(app.bgMusic, timeBgm * app.speed);
     this.value = "暂停";
   }
+  this.classList.remove("disabled");
 });
+
+/** @param {HTMLVideoElement} data */
+function playVideo(data, offset) {
+  if (!offset) offset = 0;
+  data.currentTime = offset;
+  data.playbackRate = app.speed;
+  data.muted = true;
+  return data.play();
+}
 inputOffset.addEventListener("input", function () {
   if (this.value < -400) this.value = -400;
   if (this.value > 600) this.value = 600;
@@ -1498,6 +1542,7 @@ function moveElements(now) {
   if (!isInEnd && timerIn.second >= 3) {
     isInEnd = true;
     playBgm(app.bgMusic);
+    if (app.bgVideo) playVideo(app.bgVideo);
   }
   if (!isPaused && isInEnd && !isOutStart) timeBgm = (now - curTimestamp) / 1e3 + curTime;
   if (timeBgm >= duration) isOutStart = true;
