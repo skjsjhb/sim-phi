@@ -90,10 +90,10 @@ const msgHandler = {
     const num = this.nodeView.querySelectorAll(".msgbox[type=warn]").length;
     if (type === "error") {
       this.nodeText.className = "error";
-      this.nodeText.innerText = msg;
+      this.nodeText.innerHTML = msg;
     } else {
       this.nodeText.className = num ? "warning" : "accept";
-      this.nodeText.innerText = msg + (num ? `（发现${num}个问题，点击查看）` : "");
+      this.nodeText.innerHTML = msg + (num ? `（发现${num}个问题，点击查看）` : "");
       this.lastMessage = msg;
     }
   },
@@ -129,6 +129,7 @@ const btnPlay = $("btn-play");
 const btnPause = $("btn-pause");
 const selectbgm = $("select-bgm");
 const selectchart = $("select-chart");
+
 $("select-note-scale").addEventListener("change", (evt) => {
   app.setNoteScale(evt.target.value);
 });
@@ -216,7 +217,7 @@ const updateLevelText = (type) => {
   levelText = [diffString, levelString].join("  Lv.");
   if (app.mods.size > 0) {
     levelText += " &";
-    for (const m of app.mods) {
+    for (const m of [...app.mods].sort().reverse()) {
       levelText += " " + m.toUpperCase();
     }
   }
@@ -239,20 +240,18 @@ const lineColor = $("lineColor");
 $("autoplay").addEventListener("change", (evt) => {
   app.playMode = evt.target.checked ? 1 : 0;
 });
+$("replay").addEventListener("change", (evt) => {
+  app.playMode = evt.target.checked ? 4 : 0;
+});
 for (const m of ["ez", "ht", "fo", "hr", "dt", "hd", "eb", "rl", "nf", "fl"]) {
   $("mod-" + m).addEventListener("change", (e) => {
     if (!app.mods.has(m) && e.target.checked) {
       app.mods.add(m);
-      if (m == "ht" || m == "dt") {
-        app.speed = app.speed * app.getModsTimingModifier();
-      }
     } else if (app.mods.has(m) && !e.target.checked) {
-      if (m == "ht" || m == "dt") {
-        app.speed = app.speed / app.getModsTimingModifier();
-      }
       app.mods.delete(m);
     }
     app.applyJDMModifier(jdm);
+    app.speed = selectspeed.value * app.getModsTimingModifier();
     updateLevelText();
   });
 }
@@ -500,29 +499,6 @@ eval(
 $$(".title").addEventListener("click", function () {
   if (!--qwq[2]) $(new URLSearchParams(location.search).has("test") ? "demo" : "legacy").classList.remove("hide");
 });
-$("demo").addEventListener("click", function (evt) {
-  evt.target.classList.add("hide");
-  const qwq = (img) => uploader.onload({ target: decode(img) }, { name: "demo.zip" });
-  const xhr = new XMLHttpRequest();
-  xhr.open("get", "src/demo.webp", true); //避免gitee的404
-  xhr.responseType = "blob";
-  xhr.onprogress = (evt) => uploader.onprogress(evt);
-  xhr.onload = () => createImageBitmap(xhr.response).then(qwq);
-  xhr.send();
-
-  function decode(img) {
-    const canvas = document.createElement("canvas");
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0);
-    const id = ctx.getImageData(0, 0, img.width, img.height);
-    const ab = new Uint8Array((id.data.length / 4) * 3);
-    for (let i = 0; i < ab.length; i++) ab[i] = id.data[((i / 3) | 0) * 4 + (i % 3)] ^ (i * 3473);
-    const size = new DataView(ab.buffer, 0, 4).getUint32(0);
-    return { result: ab.buffer.slice(4, size + 4) };
-  }
-});
 //qwq end
 const exitFull = () => {
   document.removeEventListener(full.onchange, exitFull);
@@ -607,10 +583,25 @@ function getJudgeDistance(judgeEvent, note) {
     Math.abs((offsetX - x) * cosr + (offsetY - y) * sinr) + Math.abs((offsetX - x) * sinr - (offsetY - y) * cosr) || 0
   );
 }
+
+function normalizeCoord(x, y) {
+  return [(x * 100) / canvasos.width, (y * 100) / canvasos.height];
+}
+
+function localizeCoord(u, v) {
+  return [(u * canvasos.width) / 100, (v * canvasos.height) / 100];
+}
+
 const judgeManager = {
   /**@type {JudgeEvent[]} */
   list: [],
+  replay: [],
+  prevMode: -1,
   addEvent(notes, realTime) {
+    if (this.prevMode === 4 && app.playMode !== 4 && this.replay.length > 0) {
+      this.replay = []; // Empty it
+    }
+    this.prevMode = app.playMode;
     const { list } = this;
     list.length = 0;
     if (app.playMode === 1) {
@@ -630,17 +621,6 @@ const judgeManager = {
         }
       }
     } else {
-      if (!isPaused) {
-        for (const i of hitManager.list) {
-          if (!i.isTapped) list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 1);
-          if (i.isActive) list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 2);
-          if (i.type === "keyboard") list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 3); //以后加上Flick判断
-          if (i.flicking && !i.flicked) {
-            list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 3, i);
-            // i.flicked = true; 不能在这里判断，因为可能会判定不到
-          }
-        }
-      }
       if (app.mods.has("fo")) {
         // Flick over, auto flicking
         const dispTime = Math.min(frameTimer.disp, 0.04);
@@ -659,7 +639,40 @@ const judgeManager = {
           if (i.scored) continue;
           const deltaTime = i.realTime - realTime;
           if (i.type === 2) {
-            if (deltaTime < dispTime) list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 3);
+            if (deltaTime < dispTime) list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 2);
+          }
+        }
+      }
+      if (app.playMode === 4) {
+        // Replay
+        for (const r of this.replay) {
+          if (r[4]) continue;
+          const deltaTime = r[0] - realTime;
+          if (deltaTime < Math.min(frameTimer.disp, 0.04)) {
+            // Instantly
+            list[list.length] = new JudgeEvent(...localizeCoord(r[1], r[2]), r[3]);
+            r.push(1); // Finish bit
+          }
+        }
+      } else {
+        if (!isPaused) {
+          for (const i of hitManager.list) {
+            if (!i.isTapped) {
+              list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 1);
+              this.replay.push([realTime, ...normalizeCoord(i.offsetX, i.offsetY), 1]);
+            }
+            if (i.isActive) {
+              list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 2);
+              this.replay.push([realTime, ...normalizeCoord(i.offsetX, i.offsetY), 2]);
+            }
+            if (i.type === "keyboard") {
+              list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 3);
+              this.replay.push([realTime, ...normalizeCoord(i.offsetX, i.offsetY), 3]);
+            }
+            if (i.flicking && !i.flicked) {
+              list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 3, i);
+              this.replay.push([realTime, ...normalizeCoord(i.offsetX, i.offsetY), 3]);
+            }
           }
         }
       }
@@ -719,30 +732,41 @@ const judgeManager = {
         }
         if (note.status !== 4) {
           for (const judgeEvent of list) {
-            if (judgeEvent.type !== 3) continue; //跳过非Move判定
-            if (getJudgeOffset(judgeEvent, note) > width) continue;
-            let distance = getJudgeDistance(judgeEvent, note);
-            let noteJudge = note;
-            let nearcomp = false;
-            for (const nearNote of note.nearNotes) {
-              if (nearNote.status) continue;
-              if (nearNote.realTime - realTime > jdm.good) break;
-              if (getJudgeOffset(judgeEvent, nearNote) > width) continue;
-              const nearDistance = getJudgeDistance(judgeEvent, nearNote);
-              if (nearDistance < distance) {
-                distance = nearDistance;
-                noteJudge = nearNote;
-                nearcomp = true;
+            if (judgeEvent.type === 3) {
+              // Process Move
+              if (getJudgeOffset(judgeEvent, note) > width) continue;
+              let distance = getJudgeDistance(judgeEvent, note);
+              let noteJudge = note;
+              let nearcomp = false;
+              for (const nearNote of note.nearNotes) {
+                if (nearNote.status) continue;
+                if (nearNote.realTime - realTime > jdm.good) break;
+                if (getJudgeOffset(judgeEvent, nearNote) > width) continue;
+                const nearDistance = getJudgeDistance(judgeEvent, nearNote);
+                if (nearDistance < distance) {
+                  distance = nearDistance;
+                  noteJudge = nearNote;
+                  nearcomp = true;
+                }
               }
-            }
-            //console.log('Perfect', i.name);
-            if (!judgeEvent.event) {
-              noteJudge.status = 4;
-              if (!nearcomp) break;
-            } else if (!judgeEvent.event.flicked) {
-              noteJudge.status = 4;
-              judgeEvent.event.flicked = true;
-              if (!nearcomp) break;
+              //console.log('Perfect', i.name);
+              if (!judgeEvent.event) {
+                noteJudge.status = 4;
+                if (!nearcomp) break;
+              } else if (!judgeEvent.event.flicked) {
+                noteJudge.status = 4;
+                judgeEvent.event.flicked = true;
+                if (!nearcomp) break;
+              }
+            } else if (app.mods.has("fo")) {
+              // Treat it as drag
+              for (const judgeEvent of list) {
+                if (judgeEvent.type !== 2) continue; //跳过非Drag判定
+                if (getJudgeOffset(judgeEvent, note) > width) continue;
+                // console.log('Perfect', i.name);
+                note.status = 4;
+                break;
+              }
             }
           }
         } else if (deltaTime < 0) {
@@ -852,6 +876,107 @@ const judgeManager = {
     }
   },
 };
+
+// Import and export replays
+function dlReplay() {
+  const st = JSON.stringify({
+    meta: {
+      map: selectchart.value,
+      canonicalTitle: `${inputName.value || inputName.placeholder} [${selectLevel.value} Lv.${
+        selectDifficulty.value
+      }] (${inputArtist.value || inputArtist.placeholder} // ${inputCharter.value || inputCharter.placeholder})`,
+      bgm: selectbgm.value,
+      bg: selectbg.value,
+      flip: selectflip.value,
+      level: selectLevel.value,
+      difficulty: selectDifficulty.value,
+      speed: selectspeed.value,
+      mods: [...app.mods],
+      score: Math.round(stat.scoreNum),
+      acc: (Math.round(stat.accNum * 10000) / 100).toFixed(2),
+      maxCombo: stat.maxcombo,
+    },
+    ops: judgeManager.replay.map((r) => {
+      return [r[0], r[1], r[2], r[3]].join(",");
+    }),
+  });
+  var element = document.createElement("a");
+  element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(st));
+  element.setAttribute(
+    "download",
+    (inputName.value || inputName.placeholder) + " " + levelText + " " + Math.round(stat.scoreNum) + ".phr"
+  );
+  element.style.display = "none";
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
+}
+
+function importReplay(data) {
+  const { meta, ops } = JSON.parse(data);
+  if (!selectchart.innerHTML.includes(meta.map)) {
+    msgHandler.sendError(
+      "你没有对应的谱面! 你需要下面这首曲子的谱面：<br/>" + meta.canonicalTitle + "<br/>(谱面 ID: " + meta.map + ")"
+    );
+    return;
+  }
+  selectchart.value = meta.map;
+  selectbgm.value = meta.bgm;
+  selectbg.value = meta.bg;
+  selectflip.value = meta.flip;
+  selectLevel.value = meta.level;
+  selectDifficulty.value = meta.difficulty;
+  selectspeed.value = meta.speed;
+  app.mods.clear();
+  $$$("input[id^=mod-]").forEach((e) => {
+    e.checked = false;
+  });
+  for (const m of meta.mods) {
+    app.mods.add(m);
+    const event = new Event("change");
+    const e = $("mod-" + m);
+    e.checked = true;
+    $("mod-" + m).dispatchEvent(event);
+  }
+  $("replay").checked = true;
+  $("autoplay").checked = false;
+  app.playMode = 4; // Replay
+  msgHandler.sendMessage(`已加载回放 分数：${meta.score} 最大连击：${meta.maxCombo} 准确率：${meta.acc}`);
+  judgeManager.replay = ops.map((s) => {
+    return s.split(",").map((i, a) => {
+      return a === 3 ? parseInt(i) : parseFloat(i);
+    });
+  });
+  judgeManager.prevMode = 1; // Simulate one
+  $("btn-play").click();
+}
+
+$("btn-export-replay").addEventListener("click", () => {
+  if (judgeManager.replay.length > 0) {
+    dlReplay();
+    msgHandler.sendMessage("回放已导出");
+  } else {
+    msgHandler.sendError("没有可导出的回放数据");
+  }
+});
+
+$("btn-import-replay").addEventListener("click", () => {
+  const ele = document.createElement("input");
+  ele.type = "file";
+  ele.accept = ".phr";
+  ele.addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        importReplay(reader.result);
+      });
+      reader.readAsText(file, "UTF-8");
+    }
+  });
+  ele.click();
+});
+
 class HitEvents extends Array {
   /**	@param {(value)=>boolean} predicate */
   defilter(predicate) {
@@ -1142,10 +1267,13 @@ const qwqEnd = new Timer();
 btnPlay.addEventListener("click", async function () {
   btnPause.value = "暂停";
   if (this.value === "播放") {
+    if (judgeManager.replay.length === 0 && app.playMode === 4) {
+      return msgHandler.sendError("错误：没有回放可供观看");
+    }
     if (!selectchart.value) return msgHandler.sendError("错误：未选择任何谱面");
     if (!selectbgm.value) return msgHandler.sendError("错误：未选择任何音乐");
     audio.play(res["mute"], { loop: true, isOut: false }); //播放空音频(防止音画不同步)
-    app.prerenderChart(charts.get(selectchart.value)); //fuckqwq
+    app.prerenderChart(charts.get(selectchart.value));
     app.md5 = chartsMD5.get(selectchart.value);
     stat.level = Number(levelText.match(/\d+$/));
     stat.reset(app.chart.numOfNotes, app.md5, selectspeed.value);
@@ -1215,8 +1343,8 @@ btnPlay.addEventListener("click", async function () {
     for (const i of $$$(".disabled-when-playing")) i.classList.remove("disabled");
     btnPause.classList.add("disabled");
     //清除原有数据
-    fucktemp = false;
-    fucktemp2 = false;
+    isDone = false;
+    isRankingsReady = false;
     hitEvents0.clear();
     hitEvents1.clear();
     hitEvents2.clear();
@@ -1261,16 +1389,8 @@ function playBgm(data, offset) {
 	curTimestamp = performance.now();
 	audio.play(data, { offset: offset, playbackrate: app.speed, gainrate: app.musicVolume, interval: 1 });
 }
-/** @param {HTMLVideoElement} data */
-function playVideo(data, offset) {
-  if (!offset) offset = 0;
-  data.currentTime = offset;
-  data.playbackRate = app.speed;
-  data.muted = true;
-  return data.play();
-}
-let fucktemp = false;
-let fucktemp2 = false;
+let isDone = false;
+let isRankingsReady = false;
 //作图
 function loop() {
   const { lineScale } = app;
@@ -1278,10 +1398,10 @@ function loop() {
   app.resizeCanvas();
   //计算时间
   if (qwqOut.second < 0.67) {
-    calcqwq(now);
-    qwqdraw1(now);
-  } else if (!fucktemp) qwqdraw2();
-  if (fucktemp2) qwqdraw3(fucktemp2);
+    moveElements(now);
+    drawGameStart(now);
+  } else if (!isDone) drawEndPlay();
+  if (isRankingsReady) drawRankings(isRankingsReady);
   ctx.globalAlpha = 1;
   if ($("imageBlur").checked) ctx.drawImage(app.bgImageBlur, ...adjustSize(app.bgImageBlur, canvas, 1.1));
   else ctx.drawImage(app.bgImage, ...adjustSize(app.bgImage, canvas, 1.1));
@@ -1308,13 +1428,13 @@ function calcExAlpha(timeChart, realTime, type) {
   if (app.mods.has("hd")) {
     let exAlpha;
 
-    const diff = timeChart - (realTime - 2 * jdm.good);
+    const diff = timeChart - (realTime - 0.35); // Fixed
     exAlpha = 1 - diff / jdm.good;
     if (exAlpha < 0) {
       exAlpha = 0;
     }
     if (type == 3) {
-      exAlpha += 0.4;
+      exAlpha += 0.2;
     }
     if (exAlpha > 1) {
       exAlpha = 1;
@@ -1327,13 +1447,13 @@ function calcExAlpha(timeChart, realTime, type) {
 
 function calcFLAlpha() {
   if (app.mods.has("fl")) {
-    return Math.max(1 - stat.combo / 200, 0);
+    return Math.max(1 - stat.combo / 100, 0);
   } else {
     return 1;
   }
 }
 
-function calcqwq(now) {
+function moveElements(now) {
   frameTimer.addTick(); //计算fps
   if (!isInEnd && qwqIn.second >= 3) {
     isInEnd = true;
@@ -1432,7 +1552,7 @@ function calcqwq(now) {
         i.frameCount = isNaN(i.frameCount) ? 0 : i.frameCount + 1;
       }
     }
-    if (line.notesAbove.length > 0 || line.notesBelow.length > 0) {
+    if (line.numOfNotes > 0) {
       line.alpha *= calcFLAlpha();
     }
   }
@@ -1453,7 +1573,8 @@ function calcqwq(now) {
       judgeWidth *= 0.75;
     } else if (app.mods.has("ez")) {
       judgeWidth *= 1.25;
-    } else if (app.mods.has("hd")) {
+    }
+    if (app.mods.has("hd")) {
       judgeWidth *= 1.05;
     }
     judgeManager.addEvent(app.notes, timeChart);
@@ -1471,7 +1592,7 @@ function calcqwq(now) {
   }
 }
 
-function qwqdraw1(now) {
+function drawGameStart(now) {
   const { lineScale, noteScaleRatio } = app;
   const anim0 = (i) => {
     //绘制打击特效0
@@ -1657,7 +1778,7 @@ function qwqdraw1(now) {
     ctxos.globalAlpha =
       qwqIn.second < 0.67 ? tween.easeOutSine(qwqIn.second * 1.5) : 1 - tween.easeOutSine(qwqOut.second * 1.5);
     ctxos.font = `${lineScale * 0.66}px Custom,Noto Sans SC`;
-    ctxos.fillText(app.playMode === 1 ? "Auto" : "combo", app.wlen, lineScale * 2.05);
+    ctxos.fillText(app.playMode === 1 ? "Auto" : app.playMode == 4 ? "Replay" : "combo", app.wlen, lineScale * 2.05);
   }
   //绘制曲名和等级
   ctxos.globalAlpha = 1;
@@ -1756,8 +1877,8 @@ function qwqdraw1(now) {
   }
 }
 
-function qwqdraw2() {
-  fucktemp = true;
+function drawEndPlay() {
+  isDone = true;
   btnPause.click(); //isPaused = true;
   audio.stop();
   cancelAnimationFrame(stopDrawing);
@@ -1772,18 +1893,18 @@ function qwqdraw2() {
   ctxos.fillRect(0, 0, canvasos.width, canvasos.height);
   const difficulty = ["ez", "hd", "in", "at"].indexOf(levelText.slice(0, 2).toLocaleLowerCase());
   setTimeout(() => {
-    if (!fucktemp) return; //qwq
+    if (!isDone) return; //qwq
     audio.play(res[`LevelOver${difficulty < 0 ? 2 : difficulty}_v1`], {
       loop: true,
     });
     qwqEnd.reset();
     qwqEnd.play();
     stat.level = Number(levelText.match(/\d+$/));
-    fucktemp2 = stat.getData(app.playMode === 1, selectspeed.value, app);
+    isRankingsReady = stat.getData(app.playMode === 1, selectspeed.value, app);
   }, 1000);
 }
 
-function qwqdraw3(statData) {
+function drawRankings(statData) {
   ctxos.resetTransform();
   ctxos.globalCompositeOperation = "source-over";
   ctxos.clearRect(0, 0, canvasos.width, canvasos.height);
