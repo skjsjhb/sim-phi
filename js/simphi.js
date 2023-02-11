@@ -45,9 +45,7 @@ class Stat {
     } else if (app.mods.has("is")) {
       return isFinite(this.innerScore) ? this.innerScore : 0;
     } else {
-      const a =
-        (1e6 * (this.perfect * 0.9 + this.good * 0.585 + this.maxcombo * 0.1)) /
-        this.numOfNotes;
+      const a = (1e6 * (this.perfect * 0.9 + this.good * 0.585 + this.maxcombo * 0.1)) / this.numOfNotes;
       return isFinite(a) ? a : 0;
     }
   }
@@ -56,11 +54,7 @@ class Stat {
       return Math.round(this.getScoreNum(app)) + "?";
     } else {
       const a = this.getScoreNum(app).toFixed(0);
-      return (
-        "0".repeat(a.length < 7 ? 7 - a.length : 0) +
-        a +
-        (app.mods.has("sk") ? "*" : "")
-      );
+      return "0".repeat(a.length < 7 ? 7 - a.length : 0) + a + (app.mods.has("sk") ? "*" : "");
     }
   }
   get accNum() {
@@ -86,7 +80,7 @@ class Stat {
   getRankStatus(app) {
     let hasIS = false;
     if (app.mods.has("is")) {
-      app.mods.remove("is");
+      app.mods.delete("is");
       hasIS = true;
     }
     // Get original score without IS
