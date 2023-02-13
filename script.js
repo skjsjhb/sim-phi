@@ -1431,11 +1431,7 @@ function playBgm(data, offset) {
   isPaused = false;
   if (!offset) offset = 0;
   curTimestamp = performance.now();
-  audio.play(data, {
-    offset: offset,
-    playbackrate: app.speed,
-    gainrate: app.musicVolume,
-  });
+  audio.play(data, { offset: offset, playbackrate: app.speed, gainrate: app.musicVolume, interval: 1 });
 }
 let isDone = false;
 let isRankingsReady = false;
