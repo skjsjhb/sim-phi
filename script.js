@@ -651,11 +651,17 @@ const judgeManager = {
       if (app.playMode === 4) {
         // Replay
         for (const r of this.replay) {
-          if (r[4]) continue;
+          if (r[5]) continue;
           const deltaTime = r[0] - realTime;
-          if (deltaTime < Math.min(frameTimer.disp, 0.04)) {
+          if (deltaTime < 0.001) {
             // Instantly
-            list[list.length] = new JudgeEvent(...localizeCoord(r[1], r[2]), r[3]);
+            let ev = undefined;
+            const coord = localizeCoord(r[1], r[2]);
+            if (r[4]) {
+              ev = new simphi.HitEvent("mouse", 4, ...coord);
+            }
+            list[list.length] = new JudgeEvent(...coord, r[3], ev);
+            console.log(`Created EVENT at ${realTime} expecting ${r[0]}`);
             r.push(1); // Finish bit
           }
         }
@@ -664,19 +670,20 @@ const judgeManager = {
           for (const i of hitManager.list) {
             if (!i.isTapped) {
               list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 1);
-              this.replay.push([realTime.toFixed(4), ...normalizeCoord(i.offsetX, i.offsetY), 1]);
+              this.replay.push([realTime.toFixed(4), ...normalizeCoord(i.offsetX, i.offsetY), 1, 0]);
             }
             if (i.isActive) {
               list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 2);
-              this.replay.push([realTime.toFixed(4), ...normalizeCoord(i.offsetX, i.offsetY), 2]);
+              this.replay.push([realTime.toFixed(4), ...normalizeCoord(i.offsetX, i.offsetY), 2, 0]);
             }
             if (i.type === "keyboard") {
+              // Not fully implemented
               list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 3);
-              this.replay.push([realTime.toFixed(4), ...normalizeCoord(i.offsetX, i.offsetY), 3]);
+              this.replay.push([realTime.toFixed(4), ...normalizeCoord(i.offsetX, i.offsetY), 3, 0]);
             }
             if (i.flicking && !i.flicked) {
               list[list.length] = new JudgeEvent(i.offsetX, i.offsetY, 3, i);
-              this.replay.push([realTime.toFixed(4), ...normalizeCoord(i.offsetX, i.offsetY), 3]);
+              this.replay.push([realTime.toFixed(4), ...normalizeCoord(i.offsetX, i.offsetY), 3, 1]);
             }
           }
         }

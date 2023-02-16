@@ -844,4 +844,4 @@ function chartify(json) {
   }
   return newChart;
 }
-export default { Stat, JudgementMatrix, Renderer, HitManager };
+export default { Stat, JudgementMatrix, Renderer, HitManager, HitEvent };
